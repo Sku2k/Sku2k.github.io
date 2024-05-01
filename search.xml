@@ -1,304 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>TCP&amp;IP</title>
-    <url>/2021/03/14/%E5%A4%87%E5%BF%98/TCP&amp;IP/</url>
-    <content><![CDATA[<h2 id="TCP"><a class="header-anchor" href="#TCP"></a>TCP</h2>
-<h3 id="三次握手和四次挥手"><a class="header-anchor" href="#三次握手和四次挥手"></a>三次握手和四次挥手</h3>
-<p>TCP是可靠的，面向连接的传输层协议，端到端之间要进行TCP通信首先就要建立起TCP连接，当通信结束时断开TCP连接。这里TCP连接的建立与断开过程就分别由<code>三次握手</code>和<code>四次挥手</code>来完成。</p>
-<ul>
-<li>
-<p>三次握手</p>
-<p>TCP连接是通过三次握手进行初始化的。三次握手的目的是同步连接双方的序列号和确认号并交换 TCP窗口大小信息。具体过程如下图所示。</p>
-<p><img src="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316191610581.png" class="lazy" data-srcset="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316191610581.png" srcset="/images/loadingImage.gif" alt="image-20210316191610581"></p>
-<p><strong>第一次握手：</strong> 建立连接。客户端发送连接请求报文段，SYN位置为1，Sequence Number为随机数<code>i</code>；然后，客户端进入SYN_SENT状态，等待服务器的确认；</p>
-<p><strong>第二次握手：</strong> 服务器收到SYN报文段。服务器收到客户端的SYN报文段，需要对这个SYN报文段进行确认，设置Acknowledgment Number为<code>i+1</code> ( Sequence Number+1 )；同时，自己自己还要发送SYN请求信息，SYN设置为1，Sequence Number为<code>j</code>；服务器端将上述所有信息放到一个报文段（即SYN+ACK报文段）中，一并发送给客户端，此时服务器进入SYN_RCVD状态；</p>
-<p><strong>第三次握手：</strong> 客户端收到服务器的SYN+ACK报文段。然后将Acknowledgment Number设置为<code>j+1</code>，向服务器发送ACK报文段，这个报文段发送完毕以后，客户端和服务器端都进入ESTABLISHED状态，完成TCP三次握手。</p>
-<p>在wireshark中可以分别查看<code>ACK</code>和<code>Seq</code>的实际值和相对值，第一个包的Seq相对值为0。</p>
-<p><strong><code>Seq</code>的相对值为当前端已发送的TCP总段长，<code>ACK</code>的相对值为当前端已接收的TCP总段长（单位：字节），</strong><code>SYN</code>标志位和<code>FIN</code>标志位也要占1字节（其他标志位如ACK不占）。</p>
-</li>
-<li>
-<p>四次挥手</p>
-<img src="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316213743223.png" class="lazy" data-srcset="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316213743223.png" srcset="/images/loadingImage.gif" style="zoom:50%;">
-<p><strong>中断连接端可以是Client端，也可以是Server端。</strong></p>
-<p>假设Client端发起中断连接请求，也就是发送FIN报文。Server端接到FIN报文后，意思是说&quot;我Client端没有数据要发给你了&quot;，但是如果你还有数据没有发送完成，则不必急着关闭Socket，可以继续发送数据。所以你先发送ACK，“告诉Client端，你的请求我收到了，但是我还没准备好，请继续你等我的消息”。这个时候Client端就进入FIN_WAIT状态，继续等待Server端的FIN报文。当Server端确定数据已发送完成，则向Client端发送FIN报文，“告诉Client端，好了，我这边数据发完了，准备好关闭连接了”。Client端收到FIN报文后，&quot;就知道可以关闭连接了，但是他还是不相信网络，怕Server端不知道要关闭，所以发送ACK后进入TIME_WAIT状态，如果Server端没有收到ACK则可以重传。“，Server端收到ACK后，“就知道可以断开连接了”。Client端等待了2MSL后依然没有收到回复，则证明Server端已正常关闭，那好，我Client端也可以关闭连接了。Ok，TCP连接就这样关闭了！</p>
-</li>
-</ul>
-<h3 id="TCP和UDP的对比"><a class="header-anchor" href="#TCP和UDP的对比"></a>TCP和UDP的对比</h3>
-<p>有连接/无连接（可靠/不可靠）</p>
-<p>有拆分合并/无拆分合并</p>
-<p>有拥塞控制/无拥塞控制（发送速率的调整）</p>
-<p>单播/多播</p>
-<h3 id="滑动窗口和流量控制"><a class="header-anchor" href="#滑动窗口和流量控制"></a>滑动窗口和流量控制</h3>
-<h3 id="拥塞控制"><a class="header-anchor" href="#拥塞控制"></a>拥塞控制</h3>
-<h2 id="http-https"><a class="header-anchor" href="#http-https"></a>http/https</h2>
-<h3 id="http各版本区别"><a class="header-anchor" href="#http各版本区别"></a>http各版本区别</h3>
-<p>http1.0 vs http1.1</p>
-<p>http1.1开始，默认使用长连接（HTTP协议的长连接和短连接，实质上是TCP协议的长连接和短连接。）</p>
-<p>http1.1增加了一些错误状态码，如409（Conflict）表示请求的资源与资源的当前状态发生冲突；410（Gone）表示服务器上的某个资源被永久性的删除。</p>
-<h3 id="SSL-TLS"><a class="header-anchor" href="#SSL-TLS"></a>SSL/TLS</h3>
-<ul>
-<li>首先由客户端发送Client Hello 消息到服务器，消息中主要包含了客户端支持的<code>ciphersuites</code>， TLS 版本信息和客户端随机数。<strong>注意此时是明文传输</strong></li>
-<li>服务器接收到消息后，返回自己支持的<code>ciphersuites</code>， TLS 版本，<strong>自己的数字证书</strong>和服务器端生成的随机数。<strong>注意此时是明文传输</strong></li>
-<li>客户端开始验证数字证书，可能会不断往上追溯 CA、CA 的 CA、CA 的 CA 的 CA，直到一个受信的 CA。验证完证书之后生成一个新的<code>pre-master key</code>，再使用证书中的公钥来对<code>pre-master key</code>进行加密，然后发送给服务器。<strong>注意此时是非对称加密传输</strong></li>
-<li>服务器接收到客户端发送过来的非对称加密的密文，使用自己的私钥进行解密，获得了<code>pre-master key</code>。<strong>注意此时是非对称加密传输</strong></li>
-<li>到这里为止，服务器和客户端都有三组数字，**分别是客户端的随机数、服务器的随机数和pre-master key。**其中由于客户端的随机数和服务器的随机数都是使用明文传输，所以这两个数字是有被暴露的风险的，但是由于<code>pre-master key</code>是使用非对称加密传输，十分安全，所以将这三者结合，使用之前协商好的特定的算法就可以生成一个密钥，这个密钥称为<code>shared secert</code>。也就是之后用来对称加密的密钥。</li>
-<li>客户端在计算出对称加密的密钥之后，使用该密钥进行对称加密通信，告知服务器之后都使用该密钥进行对称加密。<strong>注意此时是对称加密传输</strong></li>
-<li>服务器接收到密文后，使用之前计算出的密钥来进行对称解密，解密成功之后，再使用该密钥进行对称加密通信。告知客户端密钥确认无误，可以使用该密钥进行通信。<strong>注意此时是对称加密传输</strong></li>
-<li>至此，整个TLS的握手过程完整，之后就可以开始对称加密的通信了。</li>
-</ul>
-<h2 id="参考文章"><a class="header-anchor" href="#参考文章"></a>参考文章</h2>
-<ul>
-<li><a href="https://blog.csdn.net/whuslei/article/details/6667471">TCP协议中的三次握手和四次挥手(图解)</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/72587882">关于 TCP/IP，必知必会的10个问题</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>备忘</category>
-      </categories>
-      <tags>
-        <tag>计算机网络</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>docker常用命令</title>
-    <url>/2020/07/20/%E5%A4%87%E5%BF%98/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[<h2 id="镜像管理"><a class="header-anchor" href="#镜像管理"></a>镜像管理</h2>
-<h3 id="配置镜像仓库的国内加速地址"><a class="header-anchor" href="#配置镜像仓库的国内加速地址"></a>配置镜像仓库的国内加速地址</h3>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># Ubuntu16.04+、Debian8+、CentOS7适用</span></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 创建或修改daemon配置文件:/etc/docker/daemon.json,内容如下</span></span><br>&#123;<br>  &quot;registry-mirrors&quot;: [&quot;https://&lt;个人ID&gt;.mirror.aliyuncs.com&quot;]<br>&#125;<br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 保存文件后，重启服务</span></span><br>sudo systemctl daemon-reload<br>sudo systemctl restart docker<br></code></pre></td></tr></table></figure>
-<h3 id="从云端镜像仓库获取新镜像"><a class="header-anchor" href="#从云端镜像仓库获取新镜像"></a>从云端镜像仓库获取新镜像</h3>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 安装最新版镜像</span></span><br>docker pull &lt;镜像名&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 指定镜像版本安装</span></span><br>docker pull &lt;镜像名&gt;:&lt;镜像版本&gt;<br></code></pre></td></tr></table></figure>
-<h2 id="容器管理"><a class="header-anchor" href="#容器管理"></a>容器管理</h2>
-<h3 id="从镜像创建并运行一个新容器"><a class="header-anchor" href="#从镜像创建并运行一个新容器"></a>从镜像创建并运行一个新容器</h3>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 前台运行</span></span><br>docker run &lt;镜像名&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 后台运行</span></span><br>docker run -d &lt;镜像名&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 把容器的一个服务端口映射到宿主机上</span></span><br>docker run -p &lt;宿主机端口&gt;:&lt;容器端口&gt; &lt;镜像名&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 映射多个端口</span></span><br>docker run -p &lt;宿主机端口1&gt;:&lt;容器端口1&gt; \<br>			-p &lt;宿主机端口2&gt;:&lt;容器端口2&gt; \<br>			-p &lt;宿主机端口3&gt;:&lt;容器端口3&gt; &lt;镜像名&gt;<br>			<br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 指定容器名</span></span><br>docker run --name &lt;容器名&gt; &lt;镜像名&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 以交互模式运行,在容器内执行 /bin/bash 命令</span></span><br>docker run -it &lt;镜像名&gt; /bin/bash<br></code></pre></td></tr></table></figure>
-<h3 id="管理已创建的容器"><a class="header-anchor" href="#管理已创建的容器"></a>管理已创建的容器</h3>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 列出运行中的容器,以下二者都可以</span></span><br>docker container ls<br>docker ps<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 列出所有已创建的容器，包括停止运行的</span></span><br>docker container ls -a<br>docker ps -a<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 启动 | 停止 | 重启 | 删除容器</span></span><br>docker [ start | stop | restart | rm ] &lt;容器名或容器ID&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 重命名容器</span></span><br>docker rename &lt;原容器名&gt; &lt;新容器名&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 交互模式在容器内执行 /bin/bash 命令</span></span><br>docker run -it &lt;容器名或容器ID&gt; /bin/bash<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 从宿主机拷贝文件或文件夹到容器</span></span><br>docker cp &lt;宿主机中的文件路径&gt; &lt;容器名或容器ID&gt;:&lt;容器内文件路径&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 从容器拷贝文件或文件夹到宿主机</span></span><br>docker cp &lt;容器名或容器ID&gt;:&lt;容器内文件路径&gt; &lt;宿主机中的文件路径&gt;<br></code></pre></td></tr></table></figure>
-<h2 id="Docker-Compose"><a class="header-anchor" href="#Docker-Compose"></a>Docker Compose</h2>
-<p>使用 Docker Compose 可以很方便地定义和运行多容器应用程序，通过yml文件即可进行配置。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 首先移动到docker-compose.yml配置文件所在目录</span></span><br>cd &lt;docker-compose.yml所在目录&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 前台运行应用程序</span></span><br>docker-compose up<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 后台运行应用程序</span></span><br>docker-compose up -d<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 停止应用程序</span></span><br>docker-compose stop<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 重新启动应用程序</span></span><br>docker-compose restart<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 删除停止运行的容器</span></span><br>docker-compose rm<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 停止运行应用程序并删除对应容器</span></span><br>docker-compose down<br></code></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>备忘</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>git笔记</title>
-    <url>/2021/07/26/%E5%A4%87%E5%BF%98/git%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h2 id="概览"><a class="header-anchor" href="#概览"></a>概览</h2>
-<p>与svn等集中式版本控制系统不同，git为分布式版本控制系统，每个开发者都保存整个项目的完整镜像</p>
-<p><img src="/2021/07/26/%E5%A4%87%E5%BF%98/git%E7%AC%94%E8%AE%B0/211915189723300.jpg" class="lazy" data-srcset="/2021/07/26/%E5%A4%87%E5%BF%98/git%E7%AC%94%E8%AE%B0/211915189723300.jpg" srcset="/images/loadingImage.gif" alt="211915189723300.jpg"></p>
-<p>工作区间: 即我们创建的工程文件， 在编辑器可直观显示；</p>
-<p>暂存区: 只能通过git GUI或git shell 窗口显示，提交代码、解决冲突的中转站；</p>
-<p>本地仓库: 只能在git shell 窗口显示，连接本地代码跟远程代码的枢纽，不能联网时本地代码可先提交至该处；</p>
-<p>远程仓库: 即保存我们代码的服务器，本文以公共版本控制系统：github为例，登录github账号后可直观显示；</p>
-<h2 id="Git特点"><a class="header-anchor" href="#Git特点"></a>Git特点</h2>
-<p><strong>直接记录快照，而非比较差异</strong></p>
-<p>Git只关心文件数据的整体是否发生变化，而不是文件内容的具体差异。当文件整体发生变化时（比较指纹信息），则记录快照；若文件整体不变，则只保存上一版本快照的索引，避免重复存储。</p>
-<p><strong>几乎所有操作都是本地执行</strong></p>
-<p>Git中绝大多数操作都只需要访问本地文件和资源，不用联网。</p>
-<p><strong>校验和（checksum）为文件的唯一标识</strong></p>
-<p>一旦文件的完整性收到损坏，那么git就能立刻察觉到。</p>
-<p><strong>多数操作仅添加数据</strong></p>
-<p>常用的Git操作大多仅仅是把数据添加到数据库，因为任何一种不可逆的操作（如删除）都会使回退变得更加困难。</p>
-<p><strong>文件的三种状态</strong></p>
-<p>对于任何一个文件，在Git中只有已提交（committed），已修改（modified）和已暂存（staged）三种状态。</p>
-<p>已提交表示该文件已经被安全地保存在本地数据库；</p>
-<p>已修改表示修改了某个文件，但还没有提交保存；</p>
-<p>已暂存表示把已修改的文件放在下次提交时要保存的清单中了</p>
-<h2 id="使用方法"><a class="header-anchor" href="#使用方法"></a>使用方法</h2>
-<h3 id="获得一个Git仓库"><a class="header-anchor" href="#获得一个Git仓库"></a>获得一个Git仓库</h3>
-<p><strong>git初始化</strong></p>
-<p>要对现有的某个项目开始用 Git 管理，只需到此项目所在的目录，执行：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git init<br></code></pre></td></tr></table></figure>
-<p>初始化后，在当前目录下会出现一个名为 .git 的目录，所有 Git 需要的数据和资源都存放在这个目录中。不过目前，仅仅是按照既有的结构框架初始化好了里边所有的文件和目录，但我们还没有开始跟踪管理项目中的任何一个文件。</p>
-<p>如果当前目录下有几个文件想要纳入版本控制，需要先用 git add 命令告诉 Git 开始对这些文件进行跟踪，然后提交：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git add *.c		#把所有的c源码纳入版本控制（加入暂存区）<br>git add README	#把README加入版本控制（加入暂存区）<br>git commit -m &#x27;initial project version&#x27;		#提交代码到本地仓库<br></code></pre></td></tr></table></figure>
-<p><strong>git clone</strong></p>
-<p><code>git clone</code>用于从服务器上获取git仓库，并且获取的是项目历史的所有数据（每一个文件的每一个版本），服务器上有的数据克隆之后本地也都有了。实际上，即便服务器的磁盘发生故障，用任何一个克隆出来的客户端都可以重建服务器上的仓库，回到当初克隆时的状态。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git clone [url]<br></code></pre></td></tr></table></figure>
-<p>如果希望在克隆的时候，自己定义要新建的项目目录名称，可以在上面的命令末尾指定新的名字：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git clone git://github.com/schacon/grit.git mygrit<br></code></pre></td></tr></table></figure>
-<h3 id="状态检查"><a class="header-anchor" href="#状态检查"></a>状态检查</h3>
-<p><strong>查看当前项目的git状态</strong></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git status	## 在项目根目录下运行<br></code></pre></td></tr></table></figure>
-<p><strong>对比文件修改情况</strong></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git diff<br>git diff --cached<br></code></pre></td></tr></table></figure>
-<p><code>git diff</code>命令比较的是工作目录中当前文件和暂存区域快照之间的差异，也就是修改之后还没有暂存起来的变化内容</p>
-<p>若要看已经暂存起来的文件和上次提交时的快照之间的差异，可以用 <code>git diff --cached</code>（Git 1.6.1 及更高版本还允许使用<code>git diff --staged</code>，效果是相同的，但更好记些。）</p>
-<p><strong>查看提交历史</strong></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git log [-p] [-2]<br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># -p 表示展开显示每次提交的内容差异，-2 表示仅展示最近的两次提交</span></span><br></code></pre></td></tr></table></figure>
-<p><a href="https://blog.csdn.net/bdss58/article/details/40537859">理解head和master</a></p>
-<h3 id="基础配置"><a class="header-anchor" href="#基础配置"></a>基础配置</h3>
-<p><strong>查看git配置信息</strong></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git config -l ## 显示所有当前配置<br>git config --global -l  ## 显示所有全局配置<br>git config --local -l  ## 显示所有当前仓库独有配置<br>git config --unset user.name ## 删除 user.name 配置项<br></code></pre></td></tr></table></figure>
-<p><strong>配置远程地址</strong></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git remote add &lt;name&gt; &lt;url&gt;  ## 添加远程地址，可添加多个<br>git remote remove &lt;name&gt; ## 删除远程地址<br></code></pre></td></tr></table></figure>
-<p><strong>记住密码</strong></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git config credential.helper store ## 设置记住密码<br>git config credential.helper &#x27;cache --timeout 0&#x27; ## 15min后清除密码<br></code></pre></td></tr></table></figure>
-<p><strong>.gitignore</strong></p>
-<p>一般我们总会有些文件无需纳入 Git 的管理，也不希望它们总出现在未跟踪文件列表。通常都是些自动生成的文件，比如日志文件，或者编译过程中创建的临时文件等。我们可以在项目根目录下创建如下一个名为 .gitignore 的文件，列出要忽略的文件模式</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><code class="hljs text">## 此为注释 – 将被 Git 忽略<br>*.a       ## 忽略所有 .a 结尾的文件<br>!lib.a    ## 但 lib.a 除外<br>/TODO     ## 仅仅忽略项目根目录下的 TODO 文件，不包括 subdir/TODO<br>build/    ## 忽略 build/ 目录下的所有文件<br>doc/*.txt ## 会忽略 doc/notes.txt 但不包括 doc/server/arch.txt<br>*.[oa]    ## 忽略所有以 .o 或 .a 结尾的文件（编译过程文件）<br>*~        ## 忽略所有以波浪符 ~ 结尾的文件（文件副本）<br></code></pre></td></tr></table></figure>
-<blockquote>
-<p>文件 .gitignore 的格式规范如下：<br>
-所有空行或者以注释符号<code>＃</code>开头的行都会被 Git 忽略。<br>
-可以使用标准的 glob 模式匹配。<code> *</code> 匹配模式最后跟反斜杠<code>/</code>说明要忽略的是目录。<br>
-要忽略指定模式以外的文件或目录，可以在模式前加上叹号<code>!</code>取反</p>
-</blockquote>
-<h3 id="工作区-暂存区"><a class="header-anchor" href="#工作区-暂存区"></a>工作区&lt;-&gt;暂存区</h3>
-<h4 id="add"><a class="header-anchor" href="#add"></a>add</h4>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git add [options] [&lt;file&gt;…]<br></code></pre></td></tr></table></figure>
-<p><code>git add</code>是一个多功能命令，它可以将项目文件纳入跟踪范围，也可以将所做的修改暂存到暂存区，<code>git commit</code>只会把已加入暂存区的文件版本提交到本地仓库，所以每对项目文件做一次修改，都要使用<code>git add</code>命令将它加入暂存区，否则提交的可能就是修改之前的版本了。</p>
-<h4 id="文件操作"><a class="header-anchor" href="#文件操作"></a>文件操作</h4>
-<p><strong>git rm</strong></p>
-<p><code>git rm &lt;filename&gt;</code>用来将不需要的文件同时从Git仓库和工作目录中删除，如果只是手动从工作目录中删除该文件，则还会在&quot;Changed but not updated&quot;中看到。</p>
-<p>如果希望在工作目录中保留文件，只从git仓库中删除，那么可以加上<code>--cached</code>参数</p>
-<p><strong>git mv</strong></p>
-<p>常用于文件移动和重命名</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git mv file_from file_to<br></code></pre></td></tr></table></figure>
-<h4 id="回滚"><a class="header-anchor" href="#回滚"></a>回滚</h4>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git restore &lt;file&gt;    # 丢弃工作区的修改（包括对文件自身的操作，如添加文件、删除文件）<br>git restore --staged &lt;file&gt;    #将暂存区的修改重新放回工作区（包括对文件自身的操作，如添加文件、删除文件）<br></code></pre></td></tr></table></figure>
-<h4 id="贮藏更改"><a class="header-anchor" href="#贮藏更改"></a>贮藏更改</h4>
-<p>场景一：当你在工作区做了一些修改，并想要将这些修改提交到git仓库时，你发现共同开发这个项目的同事已经提交了一些内容。这时候你如果直接提交并推送到远程仓库，就会因为分支冲突而推送失败。</p>
-<p>场景二：当你在分支<code>dev</code>做了一些修改之后，想切换到<code>master</code>分支去做一些事情，但又不想为做到一半的工作创建一次提交，那么你就需要将你所做的修改贮藏起来。</p>
-<p>为了解决这些问题，我们可以使用<code>git stash</code>命令，将我们的在工作区所做的更改贮藏到一个栈上，并且在任何时候重新应用这些改动（甚至在不同的分支上）</p>
-<p>常用的<code>git stash</code>命令用法如下所示：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git stash save &quot;some messages&quot; # 贮藏工作区的修改，将工作区变成上次提交时的样子<br>git stash list  # 列出已经贮藏的内容<br>git stash apply  # 将最近一次的贮藏应用到当前分支<br>git stash apply stash@&#123;2&#125;  # 将 stash@&#123;2&#125; 这个贮藏应用到当前分支<br>git stash pop  # 将最近一次的贮藏应用到当前分支并删除该贮藏<br></code></pre></td></tr></table></figure>
-<p>更详细的说明可以参考：<a href="https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E8%B4%AE%E8%97%8F%E4%B8%8E%E6%B8%85%E7%90%86">https://git-scm.com/book/zh/v2/Git-工具-贮藏与清理</a></p>
-<h3 id="暂存区-本地仓库"><a class="header-anchor" href="#暂存区-本地仓库"></a>暂存区&lt;-&gt;本地仓库</h3>
-<p><strong>git commit</strong></p>
-<p>一般使用<code>git comit -m &quot;your comment&quot;</code>将代码提交到本地仓库，提交后工作区清空，再次修改则需要重新<code>git add</code>，如果不加<code>-m</code>参数，那么会启动文本编辑器以输入本次提交的说明。</p>
-<p>每一次运行提交操作，都是对你项目作一次快照，以后可以回到这个状态，或者进行比较。</p>
-<p>尽管使用暂存区域的方式可以精心准备要提交的细节，但有时候这么做略显繁琐。Git 提供了一个跳过使用暂存区域的方式，只要在提交的时候，加上<code>-a</code> 选项，Git 就会自动把所有已经跟踪过的文件暂存起来一并提交，从而跳过 <code>git add</code> 步骤。</p>
-<h3 id="本地仓库-远程仓库"><a class="header-anchor" href="#本地仓库-远程仓库"></a>本地仓库&lt;-&gt;远程仓库</h3>
-<h4 id="git-push"><a class="header-anchor" href="#git-push"></a>git push</h4>
-<p>将本地的分支版本上传到远程并合并</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git push &lt;远程主机名&gt; &lt;本地分支名&gt;:&lt;远程分支名&gt;<br></code></pre></td></tr></table></figure>
-<h4 id="git-fetch"><a class="header-anchor" href="#git-fetch"></a>git fetch</h4>
-<p>从远程仓库下载最新的commit，并且同时保留本地分支head和远程分支remotes，需要另外使用<code>git merge</code>合并分支</p>
-<h4 id="git-pull"><a class="header-anchor" href="#git-pull"></a>git pull</h4>
-<p>下载远程分支中最新的commit并合并（不建议使用，可能出现未解决代码冲突的情况）</p>
-<h3 id="操作撤销"><a class="header-anchor" href="#操作撤销"></a>操作撤销</h3>
-<p>在进行文件修改等操作后，使用<code>git status</code>查看状态，可以看到git给出的撤销提示</p>
-<p><img src="/2021/07/26/%E5%A4%87%E5%BF%98/git%E7%AC%94%E8%AE%B0/image-20210708151055459.png" class="lazy" data-srcset="/2021/07/26/%E5%A4%87%E5%BF%98/git%E7%AC%94%E8%AE%B0/image-20210708151055459.png" srcset="/images/loadingImage.gif" alt="image-20210708151055459"></p>
-<p>更多参考：<a href="https://blog.csdn.net/Sweet_19BaBa/article/details/111950384">git checkout，git restore 和 git reset</a></p>
-<h4 id="reset版本回退"><a class="header-anchor" href="#reset版本回退"></a>reset版本回退</h4>
-<p>首先<code>git log</code>查看历史提交的版本信息，得到各个commit的id，即其哈希值</p>
-<p>然后使用<code>git reset --hard &lt;commitId&gt;</code>切换到各个版本提交时的状态（清空暂存区），如果版本已提交到远程仓库，则需要在本地仓库回退后使用<code>git push -f</code>将操作强制同步到远程仓库。</p>
-<p>但实际上回退之前的版本还是存在的，使用<code>git reflog</code>可以查看历史版本记录，找到已提交过的任何一个版本的commitId，通过commitId仍可以切回最新的未回退的版本。</p>
-<h4 id="revert版本回退"><a class="header-anchor" href="#revert版本回退"></a>revert版本回退</h4>
-<p>使用<code>git reset</code>回退公共远程分支的版本后，其他人都需要用远程master分支覆盖本地master分支，显然，这不是优雅的回退方法，而<code>revert</code>命令则可以避免这个问题。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git revert HEAD                     //撤销最近一次提交<br>git revert HEAD~1                   //撤销最近2次提交<br>git revert 0ffaacc                  //撤销0ffaacc这次提交<br></code></pre></td></tr></table></figure>
-<p>git revert 命令意思是撤销某次提交。它会产生一个新的提交，虽然代码回退了，但是版本依然是向前的。所以，当你用revert回退完，所有人pull之后，代码也自动回退了。</p>
-<h3 id="分支管理"><a class="header-anchor" href="#分支管理"></a>分支管理</h3>
-<h4 id="分支新建、切换、删除"><a class="header-anchor" href="#分支新建、切换、删除"></a>分支新建、切换、删除</h4>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git branch                  #列出已有分支<br>git branch &lt;branchname&gt;     #创建新分支<br>git checkout &lt;branchname&gt;   #切换到分支<br>git branch -d &lt;branchname&gt;  #删除分支<br></code></pre></td></tr></table></figure>
-<p>在一个分支进行文件修改、新建、删除等操作在commit后不会影响其他分支。</p>
-<h4 id="分支合并"><a class="header-anchor" href="#分支合并"></a>分支合并</h4>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git merge &lt;branchname&gt;    #把 &lt;branchname&gt; 分支合并到当前分支<br></code></pre></td></tr></table></figure>
-<p>在将<code>branch2</code>合并到<code>branch1</code>的过程中，branch2中新建文件、删除原有文件、修改原有文件等操作将同步到<code>branch1</code>，当两个分支都做出修改时，可能会出现代码冲突，这时候需要我们手动修改解决冲突后再次提交才能合并成功。</p>
-<p>如果我们的主分支 <code>master</code> ，在 checkout 一个新的分支（<code>bugfix</code>）后，产生了多次提交，这时候我们将<code>bugfix</code>分支合并到<code>master</code>，<code>bugfix</code>分支上新产生的所有提交记录都会同步到<code>master</code>，导致主线版本的提交记录杂乱。如果我们想要在合并分支时只产生一条提交记录，则需要使用<code>--squash</code>参数，</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git merge --squash bugfix<br></code></pre></td></tr></table></figure>
-<h2 id="常见问题"><a class="header-anchor" href="#常见问题"></a>常见问题</h2>
-<ol>
-<li>
-<p>新建GitHub仓库，第一次push时验证账号密码失败</p>
-<p>一开始提示输入GitHub的用户名口令，正确输入后还是验证失败。这时候会出现新的登录窗口，提示通过OpenSSH登录到GitHub，这时候，输入GitHub用户名和access token（settings-developer settings-Personal access tokens）即可登录成功</p>
-</li>
-<li>
-<p>配置免密登录</p>
-<p><a href="https://www.cnblogs.com/qishuaiRisen/p/16650513.html">https://www.cnblogs.com/qishuaiRisen/p/16650513.html</a></p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>备忘</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>正则表达式笔记</title>
-    <url>/2020/04/18/%E5%A4%87%E5%BF%98/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h2 id="简介"><a class="header-anchor" href="#简介"></a>简介</h2>
-<blockquote>
-<p>正则表达式是描述一组字符串特征的模式，用来匹配特定的字符串。 ——Ken Thompson</p>
-</blockquote>
-<p>一个正则表达式是一串特殊的字符串，它可以用于匹配一组字符串。比如</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">\d<br></code></pre></td></tr></table></figure>
-<p>就是一个简单的正则表达式，它可以用来匹配0~9范围内的任意<strong>一个数字</strong>。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">^(\(\d&#123;3&#125;\)|^\d&#123;3&#125;[.-]?)?\d&#123;3&#125;[.-]?\d&#123;4&#125;$<br></code></pre></td></tr></table></figure>
-<p>而上面这个式子也是一个正则表达式，只不过复杂了一些，它可以匹配10位的北美电话号码。无论区号是否加括号，数字间是否有句点或连字符，它都可以匹配。</p>
-<p><strong>学习时用到的工具</strong>：</p>
-<blockquote>
-<p><a href="https://regex101.com/">Regexpal网站</a>：可以在线测试正则表达式</p>
-</blockquote>
-<h2 id="基础"><a class="header-anchor" href="#基础"></a>基础</h2>
-<h3 id="字符的匹配"><a class="header-anchor" href="#字符的匹配"></a>字符的匹配</h3>
-<h4 id="字面值匹配"><a class="header-anchor" href="#字面值匹配"></a>字面值匹配</h4>
-<p>最简单的一种，比如一个数字字符串<code>666</code>，可以在目标文本中匹配所有的<code>666</code></p>
-<p><img src="/2020/04/18/%E5%A4%87%E5%BF%98/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%AC%94%E8%AE%B0/fN1TQqSlujEPBCy.png" class="lazy" data-srcset="/2020/04/18/%E5%A4%87%E5%BF%98/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%AC%94%E8%AE%B0/fN1TQqSlujEPBCy.png" srcset="/images/loadingImage.gif" alt></p>
-<h4 id="字符组匹配"><a class="header-anchor" href="#字符组匹配"></a>字符组匹配</h4>
-<p>正则表达式将方括号<code>[]</code>视为特殊的元字符，因此方括号本身不参与匹配，而对括号内容进行匹配。字符组包括以下几种情况：</p>
-<p><code>[aBc]</code>：匹配<code>a</code>,<code>B</code>,<code>c</code>三个字符中的其中一个</p>
-<p><code>[0-9]</code>：匹配0到9范围内的任意数字。要匹配任意3位数字可以用 <code>[0-9][0-9][0-9]</code></p>
-<p><code>[a-z]</code>：匹配所有小写字母</p>
-<p><code>[A-Z]</code>：匹配所有大写字母</p>
-<p><code>[a-zA-Z]</code>：匹配所有大小写字母</p>
-<p><code>[^ARP]</code>：匹配除了<code>A</code>,<code>R</code>,<code>P</code>以外的所有字符</p>
-<p><code>[^a-z]</code>：匹配所有除了小写字母以外的字符</p>
-<h4 id="字符组简写式（元字符）"><a class="header-anchor" href="#字符组简写式（元字符）"></a>字符组简写式（元字符）</h4>
-<p>例如：<code>[0-9]</code>可以简写为<code>\d</code>，它们都能匹配0到9之间的任意一个数字。</p>
-<p>空白字符：</p>
-<p><code>\f</code>：换页符</p>
-<p><code>\n</code>：换行符</p>
-<p><code>\r</code>：回车符</p>
-<p><code>\t</code>：制表符（Tab的缩进）</p>
-<p><code>\v</code>：垂直制表符</p>
-<p><code>\s</code>：任意一个空白字符，等价于 [\f\n\r\t\v]</p>
-<p><code>\S</code>：对<code>\s</code>取非，即任意非空字符</p>
-<p>数字元字符：</p>
-<p><code>\d</code>：匹配任意阿拉伯数字</p>
-<p><code>\D</code>：匹配任意非数字字符（如连字符<code>-</code>)</p>
-<p>字母数字元字符：</p>
-<p><code>\w</code>：大小写字母，下划线和数字，等价于[a-zA-Z0-9]</p>
-<p><code>\W</code>：对<code>\w</code>取非</p>
-<h4 id="任意字符的匹配"><a class="header-anchor" href="#任意字符的匹配"></a>任意字符的匹配</h4>
-<p><code>.</code>：点号（英文句号）可以匹配任意字符（但一般不匹配换行符）。</p>
-<p><code>.</code>是元字符，表示它有特殊的含义，而不是字符本身的含义。如果需要匹配 . ，那么要用 \ 进行转义，即在 . 前面加上<code> \</code> 。</p>
-<h3 id="捕获分组和后向引用"><a class="header-anchor" href="#捕获分组和后向引用"></a>捕获分组和后向引用</h3>
-<p>将<code>\d</code>放到<code>()</code>中，则<code>\d</code>匹配到一个数字的同时该数字被捕获。捕获之后则可以被后向引用。</p>
-<p><code>\1</code>后向引用被捕获的字符。</p>
-<p>例如：正则表达式 <code>(\d)\d\1</code>  可以匹配 <code>101</code> 或者 <code>212</code> , <code>383</code> 等等,但无法匹配 <code>102</code> 。因为<code>\1</code>引用的是那个被捕获的字符，所以这个正则表达式匹配到的一定是某三个相连数字，其中第一个数字和第三个数字一定是相同的。</p>
-<h3 id="量词"><a class="header-anchor" href="#量词"></a>量词</h3>
-<p><code>\d&#123;3&#125;</code>匹配三个相连数字，这里<code>&#123;3&#125;</code>就是一个量词，花括号中可以有多个数字（用逗号<code>,</code>隔开）比如<code>&#123;3,4&#125;</code>表示3个或者4个；</p>
-<p><code>\d-?</code>匹配一个数字，如果该数字之后跟着一个连字符那么连字符也会被匹配到。这里的<code>?</code>也是一个量词，表示0个或1个；</p>
-<p>同理，其他常用的量词还有</p>
-<p><code>+</code>：表示1个或者多个</p>
-<p><code>*</code>：表示0个或者多个</p>
-<h3 id="括选文字符"><a class="header-anchor" href="#括选文字符"></a>括选文字符</h3>
-<p>现在可以看看下面这个比较健壮的表达式了，就是简介中的那个，它匹配10位的北美电话号码</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">^(\(\d&#123;3&#125;\)|^\d&#123;3&#125;[.-]?)?\d&#123;3&#125;[.-]?\d&#123;4&#125;$<br></code></pre></td></tr></table></figure>
-<p><code>^</code>匹配行起始位置，即<code>^</code>后面跟着的内容<code>(\(\d&#123;3&#125;\)|^\d&#123;3&#125;[.-]?)</code>必须出现在行首；</p>
-<p><code>\(</code>和<code>\)</code>就是将左右括号转义，让它表示其字面意思，而不是捕获分组的开始结束标志；</p>
-<p><code>|</code>表示或运算，即匹配<code>|</code>两边的内容之一；</p>
-<p><code>[.-]</code>匹配一个可选的点号（这里点号不再匹配任意字符）或连字符；</p>
-<p><code>$</code>匹配行的结束标志</p>
-<p>这个表达式最终匹配十位的北美电话号码，而且括号、连字符或者点号都是可选的。你可以试试不同格式的电话号码，看看它能否匹配。以上正则表达式中的捕获分组并不是必需的。分组是必要的，但是捕获不需要。更好的方法是使用非捕获分组。</p>
-<h3 id="模式匹配"><a class="header-anchor" href="#模式匹配"></a>模式匹配</h3>
-<p>留坑待填</p>
-]]></content>
-      <categories>
-        <category>备忘</category>
-      </categories>
-      <tags>
-        <tag>正则表达式</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux系统加固</title>
     <url>/2021/03/07/%E6%94%BB%E9%98%B2/Linux%E7%B3%BB%E7%BB%9F%E5%8A%A0%E5%9B%BA/</url>
     <content><![CDATA[<h2 id="账号安全"><a class="header-anchor" href="#账号安全"></a>账号安全</h2>
@@ -371,80 +73,6 @@
       </categories>
       <tags>
         <tag>系统加固</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>网络代理设置</title>
-    <url>/2021/07/08/%E5%A4%87%E5%BF%98/%E7%BD%91%E7%BB%9C%E4%BB%A3%E7%90%86%E8%AE%BE%E7%BD%AE/</url>
-    <content><![CDATA[<h2 id="命令行代理设置"><a class="header-anchor" href="#命令行代理设置"></a>命令行代理设置</h2>
-<p>设置命令行代理（设置环境变量,命令行关闭后则失效）</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># cmd</span></span><br>set HTTP_PROXY=http://127.0.0.1:10809<br>set HTTPS_PROXY=http://127.0.0.1:10809<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># powershell 默认使用系统代理，无需手动配置</span></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># bash</span></span><br>export http_proxy=&quot;http://127.0.0.1:10809&quot;<br>export https_proxy=&quot;http://127.0.0.1:10809&quot;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 测试是否设置成功不要ping google，因为ping命令用的是ICMP协议。正确做法是</span></span><br>curl www.google.com<br></code></pre></td></tr></table></figure>
-<h2 id="git代理设置"><a class="header-anchor" href="#git代理设置"></a>git代理设置</h2>
-<p>设置永久有效</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git config --global http.proxy http://127.0.0.1:10809	<br>git config --global https.proxy https://127.0.0.1:10809<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 若为socks代理，则为：</span></span><br>git config --global http.proxy &#x27;socks5://127.0.0.1:10808&#x27;<br>git config --global https.proxy &#x27;socks5://127.0.0.1:10808&#x27;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">查看代理是否设置成功</span><br>git config --global --list<br></code></pre></td></tr></table></figure>
-<h2 id="go代理设置"><a class="header-anchor" href="#go代理设置"></a>go代理设置</h2>
-<p>Bash (Linux / macOS)</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">export GOPROXY=https://goproxy.io,direct<br></code></pre></td></tr></table></figure>
-<p>PowerShell (Windows)</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$</span><span class="language-bash"><span class="hljs-built_in">env</span>:GOPROXY = <span class="hljs-string">&quot;https://goproxy.io,direct&quot;</span></span><br></code></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>备忘</category>
-      </categories>
-      <tags>
-        <tag>计算机网络</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>2020信安国赛WriteUp</title>
-    <url>/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/</url>
-    <content><![CDATA[<h2 id="Misc"><a class="header-anchor" href="#Misc"></a>Misc</h2>
-<h3 id="the-best-ctf-game"><a class="header-anchor" href="#the-best-ctf-game"></a>the_best_ctf_game</h3>
-<p>解压得到二进制文件:flag</p>
-<p>使用winhex打开</p>
-<p>观察到</p>
-<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820142658465.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820142658465.png" srcset="/images/loadingImage.gif" alt="image-20200820142658465"></p>
-<p>即flag的值</p>
-<h3 id="电脑被黑"><a class="header-anchor" href="#电脑被黑"></a>电脑被黑</h3>
-<p>解压缩包得到disk_dump文件</p>
-<p>使用file 命令查看信息</p>
-<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201008231.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201008231.png" srcset="/images/loadingImage.gif" alt="image-20200820201008231"></p>
-<p>可以看到是ext3的文件系统</p>
-<p>挂载到 test文件夹下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">mount ./disk_dump ./test/<br></code></pre></td></tr></table></figure>
-<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201521587.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201521587.png" srcset="/images/loadingImage.gif" alt="image-20200820201521587"></p>
-<p>查看???.png，提示flag已被删除</p>
-<p>使用extundelete恢复被删除的文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">extundelete ./disk_dump --restore-all<br></code></pre></td></tr></table></figure>
-<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201902816.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201902816.png" srcset="/images/loadingImage.gif" alt="image-20200820201902816"></p>
-<p>得到flag.txt，但打开后是乱码</p>
-<p>返回test/misc01文件夹下，看到可执行文件demo</p>
-<p>使用strings命令查看</p>
-<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820202222131.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820202222131.png" srcset="/images/loadingImage.gif" alt="image-20200820202222131"></p>
-<p>猜测demo对flag.txt进行了处理</p>
-<p>使用ida反编译查看其伪源码</p>
-<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/20200820202837.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/20200820202837.png" srcset="/images/loadingImage.gif" alt="image-20200820202837"></p>
-<p>编写代码对flag文件进行解码</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>    FILE *fileOld = fopen(<span class="hljs-string">&quot;D:\\flag.txt&quot;</span>,<span class="hljs-string">&quot;rb&quot;</span>);<br>    FILE *fileNew = fopen(<span class="hljs-string">&quot;D:\\flagNew.txt&quot;</span>,<span class="hljs-string">&quot;rb+&quot;</span>);<br>    <span class="hljs-type">char</span> v1,v4,v5;<br>    v4 = <span class="hljs-number">34</span>;<br>    v5 = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">while</span>(<span class="hljs-number">1</span>)<br>    &#123;<br>        v1 = fgetc(fileOld);<br>        <span class="hljs-keyword">if</span>( v1 == <span class="hljs-number">-1</span> )<br>            <span class="hljs-keyword">break</span>;<br>        fputc(((v1^v4)-v5),fileNew);<br>        v4 += <span class="hljs-number">34</span>;<br>        v5 = (v5 + <span class="hljs-number">2</span>) &amp; <span class="hljs-number">0xF</span>;<br>    &#125;<br>    fclose(fileNew);<br>    fclose(fileOld);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-<p>解码后得到flag</p>
-<h2 id="Crypto"><a class="header-anchor" href="#Crypto"></a>Crypto</h2>
-<p>只做出来一道题</p>
-<h3 id="baby"><a class="header-anchor" href="#baby"></a>baby</h3>
-<p>一道RSA的密码学题目</p>
-<p>给了我们密文c和因数n，e很小。所以可以通过爆破的方式跑出明文</p>
-<p>解密脚本</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">import gmpy<br>n = 691316677109436623113422493782665795857921917893759942123087462879884062720557906429183155859597756890896192044003240821906332575292476160072039505771794531255542244123516929671277306361467074545720823735806308003091983427678300287709469582282466572230066580195227278214776280213722215953097747453437289734469454712426107967188109548966907237877840316009828476200388327329144783877033491238709954473809991152727333616022406517443130542713167206421787038596312975153165848625721911080561242646092299016802662913017071685740548699163836007474224715426587609549372289181977830092677128368806113131459831182390520942892670696447128631485606579943885812260640805756035377584155135770155915782120025116486061540105139339655722904721294629149025033066823599823964444620779259106176913478839370100891213072100063101232635183636552360952762838656307300621195248059253614745118852163569388418086291748805100175008658387803878200034840215506516715640621165661642177371863874586069524022258642915100615596032443145034847031564356671559179212705466145609698475546210994748949121359853094247990533075004393534565421776468785821261291309463205314057882016266066365636018084499158806717036972590848458891019171583268920180691221168453612029698510271<br>c = 3442467842482561323703237574537907554035337622762971103210557480050349359873041624336261782731509068910003360547049942482415036862904844600484976674423604861710166033558576921438068555951948966099658902606725292551952345193132973996288566246138708754810511646811362017769063041425115712305629748341207792305694590742066971202523405301561233341991037374101265623265332070787449332991792097090044761973705909217137119649091313457206589803479797894924402017273543719924849592070328396276760381501612934039653<br>i = 0<br>while 1:<br>    if(gmpy.root(c+i*n, 3)[1]==1):<br>        print gmpy.root(c+i*n, 3)<br>        break<br>    i = i+1<br></code></pre></td></tr></table></figure>
-<p>结果是</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">m=1509929362729692740720713536968392715648402189242304424408501797538190273763219595501810359943405524344790331677540693316488309231687357778980543085568230705511696327037<br></code></pre></td></tr></table></figure>
-<p>再解码得到flag</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">import libnum<br>n=1509929362729692740720713536968392715648402189242304424408501797538190273763219595501810359943405524344790331677540693316488309231687357778980543085568230705511696327037<br>print(libnum.n2s(n))<br></code></pre></td></tr></table></figure>
-<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200920135022901.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200920135022901.png" srcset="/images/loadingImage.gif" alt="image-20200920135022901"></p>
-]]></content>
-      <categories>
-        <category>杂记</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
       </tags>
   </entry>
   <entry>
@@ -601,16 +229,55 @@
       </tags>
   </entry>
   <entry>
-    <title>关于我</title>
-    <url>/2020/04/06/%E6%9D%82%E8%AE%B0/%E5%85%B3%E4%BA%8E%E6%88%91/</url>
-    <content><![CDATA[<p>一个对网络安全初窥门径的人，偶尔会心血来潮想要写写代码。</p>
-<p>邮箱：dawnyh@qq.com，欢迎交流 ~</p>
+    <title>2020信安国赛WriteUp</title>
+    <url>/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/</url>
+    <content><![CDATA[<h2 id="Misc"><a class="header-anchor" href="#Misc"></a>Misc</h2>
+<h3 id="the-best-ctf-game"><a class="header-anchor" href="#the-best-ctf-game"></a>the_best_ctf_game</h3>
+<p>解压得到二进制文件:flag</p>
+<p>使用winhex打开</p>
+<p>观察到</p>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820142658465.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820142658465.png" srcset="/images/loadingImage.gif" alt="image-20200820142658465"></p>
+<p>即flag的值</p>
+<h3 id="电脑被黑"><a class="header-anchor" href="#电脑被黑"></a>电脑被黑</h3>
+<p>解压缩包得到disk_dump文件</p>
+<p>使用file 命令查看信息</p>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201008231.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201008231.png" srcset="/images/loadingImage.gif" alt="image-20200820201008231"></p>
+<p>可以看到是ext3的文件系统</p>
+<p>挂载到 test文件夹下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">mount ./disk_dump ./test/<br></code></pre></td></tr></table></figure>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201521587.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201521587.png" srcset="/images/loadingImage.gif" alt="image-20200820201521587"></p>
+<p>查看???.png，提示flag已被删除</p>
+<p>使用extundelete恢复被删除的文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">extundelete ./disk_dump --restore-all<br></code></pre></td></tr></table></figure>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201902816.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201902816.png" srcset="/images/loadingImage.gif" alt="image-20200820201902816"></p>
+<p>得到flag.txt，但打开后是乱码</p>
+<p>返回test/misc01文件夹下，看到可执行文件demo</p>
+<p>使用strings命令查看</p>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820202222131.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820202222131.png" srcset="/images/loadingImage.gif" alt="image-20200820202222131"></p>
+<p>猜测demo对flag.txt进行了处理</p>
+<p>使用ida反编译查看其伪源码</p>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/20200820202837.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/20200820202837.png" srcset="/images/loadingImage.gif" alt="image-20200820202837"></p>
+<p>编写代码对flag文件进行解码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>    FILE *fileOld = fopen(<span class="hljs-string">&quot;D:\\flag.txt&quot;</span>,<span class="hljs-string">&quot;rb&quot;</span>);<br>    FILE *fileNew = fopen(<span class="hljs-string">&quot;D:\\flagNew.txt&quot;</span>,<span class="hljs-string">&quot;rb+&quot;</span>);<br>    <span class="hljs-type">char</span> v1,v4,v5;<br>    v4 = <span class="hljs-number">34</span>;<br>    v5 = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">while</span>(<span class="hljs-number">1</span>)<br>    &#123;<br>        v1 = fgetc(fileOld);<br>        <span class="hljs-keyword">if</span>( v1 == <span class="hljs-number">-1</span> )<br>            <span class="hljs-keyword">break</span>;<br>        fputc(((v1^v4)-v5),fileNew);<br>        v4 += <span class="hljs-number">34</span>;<br>        v5 = (v5 + <span class="hljs-number">2</span>) &amp; <span class="hljs-number">0xF</span>;<br>    &#125;<br>    fclose(fileNew);<br>    fclose(fileOld);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>解码后得到flag</p>
+<h2 id="Crypto"><a class="header-anchor" href="#Crypto"></a>Crypto</h2>
+<p>只做出来一道题</p>
+<h3 id="baby"><a class="header-anchor" href="#baby"></a>baby</h3>
+<p>一道RSA的密码学题目</p>
+<p>给了我们密文c和因数n，e很小。所以可以通过爆破的方式跑出明文</p>
+<p>解密脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">import gmpy<br>n = 691316677109436623113422493782665795857921917893759942123087462879884062720557906429183155859597756890896192044003240821906332575292476160072039505771794531255542244123516929671277306361467074545720823735806308003091983427678300287709469582282466572230066580195227278214776280213722215953097747453437289734469454712426107967188109548966907237877840316009828476200388327329144783877033491238709954473809991152727333616022406517443130542713167206421787038596312975153165848625721911080561242646092299016802662913017071685740548699163836007474224715426587609549372289181977830092677128368806113131459831182390520942892670696447128631485606579943885812260640805756035377584155135770155915782120025116486061540105139339655722904721294629149025033066823599823964444620779259106176913478839370100891213072100063101232635183636552360952762838656307300621195248059253614745118852163569388418086291748805100175008658387803878200034840215506516715640621165661642177371863874586069524022258642915100615596032443145034847031564356671559179212705466145609698475546210994748949121359853094247990533075004393534565421776468785821261291309463205314057882016266066365636018084499158806717036972590848458891019171583268920180691221168453612029698510271<br>c = 3442467842482561323703237574537907554035337622762971103210557480050349359873041624336261782731509068910003360547049942482415036862904844600484976674423604861710166033558576921438068555951948966099658902606725292551952345193132973996288566246138708754810511646811362017769063041425115712305629748341207792305694590742066971202523405301561233341991037374101265623265332070787449332991792097090044761973705909217137119649091313457206589803479797894924402017273543719924849592070328396276760381501612934039653<br>i = 0<br>while 1:<br>    if(gmpy.root(c+i*n, 3)[1]==1):<br>        print gmpy.root(c+i*n, 3)<br>        break<br>    i = i+1<br></code></pre></td></tr></table></figure>
+<p>结果是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">m=1509929362729692740720713536968392715648402189242304424408501797538190273763219595501810359943405524344790331677540693316488309231687357778980543085568230705511696327037<br></code></pre></td></tr></table></figure>
+<p>再解码得到flag</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">import libnum<br>n=1509929362729692740720713536968392715648402189242304424408501797538190273763219595501810359943405524344790331677540693316488309231687357778980543085568230705511696327037<br>print(libnum.n2s(n))<br></code></pre></td></tr></table></figure>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200920135022901.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200920135022901.png" srcset="/images/loadingImage.gif" alt="image-20200920135022901"></p>
 ]]></content>
       <categories>
         <category>杂记</category>
       </categories>
       <tags>
-        <tag>关于我</tag>
+        <tag>CTF</tag>
       </tags>
   </entry>
   <entry>
@@ -717,6 +384,19 @@
       </tags>
   </entry>
   <entry>
+    <title>关于我</title>
+    <url>/2020/04/06/%E6%9D%82%E8%AE%B0/%E5%85%B3%E4%BA%8E%E6%88%91/</url>
+    <content><![CDATA[<p>一个对网络安全初窥门径的人，偶尔会心血来潮想要写写代码。</p>
+<p>邮箱：dawnyh@qq.com，欢迎交流 ~</p>
+]]></content>
+      <categories>
+        <category>杂记</category>
+      </categories>
+      <tags>
+        <tag>关于我</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>在Markdown中使用emoji表情</title>
     <url>/2020/04/07/%E6%9D%82%E8%AE%B0/%E5%9C%A8Markdown%E4%B8%AD%E4%BD%BF%E7%94%A8emoji%E8%A1%A8%E6%83%85/</url>
     <content><![CDATA[<h2 id="常用emoji"><a class="header-anchor" href="#常用emoji"></a>常用emoji</h2>
@@ -743,6 +423,326 @@
       </categories>
       <tags>
         <tag>Markdown</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>TCP&amp;IP</title>
+    <url>/2021/03/14/%E5%A4%87%E5%BF%98/TCP&amp;IP/</url>
+    <content><![CDATA[<h2 id="TCP"><a class="header-anchor" href="#TCP"></a>TCP</h2>
+<h3 id="三次握手和四次挥手"><a class="header-anchor" href="#三次握手和四次挥手"></a>三次握手和四次挥手</h3>
+<p>TCP是可靠的，面向连接的传输层协议，端到端之间要进行TCP通信首先就要建立起TCP连接，当通信结束时断开TCP连接。这里TCP连接的建立与断开过程就分别由<code>三次握手</code>和<code>四次挥手</code>来完成。</p>
+<ul>
+<li>
+<p>三次握手</p>
+<p>TCP连接是通过三次握手进行初始化的。三次握手的目的是同步连接双方的序列号和确认号并交换 TCP窗口大小信息。具体过程如下图所示。</p>
+<p><img src="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316191610581.png" class="lazy" data-srcset="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316191610581.png" srcset="/images/loadingImage.gif" alt="image-20210316191610581"></p>
+<p><strong>第一次握手：</strong> 建立连接。客户端发送连接请求报文段，SYN位置为1，Sequence Number为随机数<code>i</code>；然后，客户端进入SYN_SENT状态，等待服务器的确认；</p>
+<p><strong>第二次握手：</strong> 服务器收到SYN报文段。服务器收到客户端的SYN报文段，需要对这个SYN报文段进行确认，设置Acknowledgment Number为<code>i+1</code> ( Sequence Number+1 )；同时，自己自己还要发送SYN请求信息，SYN设置为1，Sequence Number为<code>j</code>；服务器端将上述所有信息放到一个报文段（即SYN+ACK报文段）中，一并发送给客户端，此时服务器进入SYN_RCVD状态；</p>
+<p><strong>第三次握手：</strong> 客户端收到服务器的SYN+ACK报文段。然后将Acknowledgment Number设置为<code>j+1</code>，向服务器发送ACK报文段，这个报文段发送完毕以后，客户端和服务器端都进入ESTABLISHED状态，完成TCP三次握手。</p>
+<p>在wireshark中可以分别查看<code>ACK</code>和<code>Seq</code>的实际值和相对值，第一个包的Seq相对值为0。</p>
+<p><strong><code>Seq</code>的相对值为当前端已发送的TCP总段长，<code>ACK</code>的相对值为当前端已接收的TCP总段长（单位：字节），</strong><code>SYN</code>标志位和<code>FIN</code>标志位也要占1字节（其他标志位如ACK不占）。</p>
+</li>
+<li>
+<p>四次挥手</p>
+<img src="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316213743223.png" class="lazy" data-srcset="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316213743223.png" srcset="/images/loadingImage.gif" style="zoom:50%;">
+<p><strong>中断连接端可以是Client端，也可以是Server端。</strong></p>
+<p>假设Client端发起中断连接请求，也就是发送FIN报文。Server端接到FIN报文后，意思是说&quot;我Client端没有数据要发给你了&quot;，但是如果你还有数据没有发送完成，则不必急着关闭Socket，可以继续发送数据。所以你先发送ACK，“告诉Client端，你的请求我收到了，但是我还没准备好，请继续你等我的消息”。这个时候Client端就进入FIN_WAIT状态，继续等待Server端的FIN报文。当Server端确定数据已发送完成，则向Client端发送FIN报文，“告诉Client端，好了，我这边数据发完了，准备好关闭连接了”。Client端收到FIN报文后，&quot;就知道可以关闭连接了，但是他还是不相信网络，怕Server端不知道要关闭，所以发送ACK后进入TIME_WAIT状态，如果Server端没有收到ACK则可以重传。“，Server端收到ACK后，“就知道可以断开连接了”。Client端等待了2MSL后依然没有收到回复，则证明Server端已正常关闭，那好，我Client端也可以关闭连接了。Ok，TCP连接就这样关闭了！</p>
+</li>
+</ul>
+<h3 id="TCP和UDP的对比"><a class="header-anchor" href="#TCP和UDP的对比"></a>TCP和UDP的对比</h3>
+<p>有连接/无连接（可靠/不可靠）</p>
+<p>有拆分合并/无拆分合并</p>
+<p>有拥塞控制/无拥塞控制（发送速率的调整）</p>
+<p>单播/多播</p>
+<h3 id="滑动窗口和流量控制"><a class="header-anchor" href="#滑动窗口和流量控制"></a>滑动窗口和流量控制</h3>
+<h3 id="拥塞控制"><a class="header-anchor" href="#拥塞控制"></a>拥塞控制</h3>
+<h2 id="http-https"><a class="header-anchor" href="#http-https"></a>http/https</h2>
+<h3 id="http各版本区别"><a class="header-anchor" href="#http各版本区别"></a>http各版本区别</h3>
+<p>http1.0 vs http1.1</p>
+<p>http1.1开始，默认使用长连接（HTTP协议的长连接和短连接，实质上是TCP协议的长连接和短连接。）</p>
+<p>http1.1增加了一些错误状态码，如409（Conflict）表示请求的资源与资源的当前状态发生冲突；410（Gone）表示服务器上的某个资源被永久性的删除。</p>
+<h3 id="SSL-TLS"><a class="header-anchor" href="#SSL-TLS"></a>SSL/TLS</h3>
+<ul>
+<li>首先由客户端发送Client Hello 消息到服务器，消息中主要包含了客户端支持的<code>ciphersuites</code>， TLS 版本信息和客户端随机数。<strong>注意此时是明文传输</strong></li>
+<li>服务器接收到消息后，返回自己支持的<code>ciphersuites</code>， TLS 版本，<strong>自己的数字证书</strong>和服务器端生成的随机数。<strong>注意此时是明文传输</strong></li>
+<li>客户端开始验证数字证书，可能会不断往上追溯 CA、CA 的 CA、CA 的 CA 的 CA，直到一个受信的 CA。验证完证书之后生成一个新的<code>pre-master key</code>，再使用证书中的公钥来对<code>pre-master key</code>进行加密，然后发送给服务器。<strong>注意此时是非对称加密传输</strong></li>
+<li>服务器接收到客户端发送过来的非对称加密的密文，使用自己的私钥进行解密，获得了<code>pre-master key</code>。<strong>注意此时是非对称加密传输</strong></li>
+<li>到这里为止，服务器和客户端都有三组数字，**分别是客户端的随机数、服务器的随机数和pre-master key。**其中由于客户端的随机数和服务器的随机数都是使用明文传输，所以这两个数字是有被暴露的风险的，但是由于<code>pre-master key</code>是使用非对称加密传输，十分安全，所以将这三者结合，使用之前协商好的特定的算法就可以生成一个密钥，这个密钥称为<code>shared secert</code>。也就是之后用来对称加密的密钥。</li>
+<li>客户端在计算出对称加密的密钥之后，使用该密钥进行对称加密通信，告知服务器之后都使用该密钥进行对称加密。<strong>注意此时是对称加密传输</strong></li>
+<li>服务器接收到密文后，使用之前计算出的密钥来进行对称解密，解密成功之后，再使用该密钥进行对称加密通信。告知客户端密钥确认无误，可以使用该密钥进行通信。<strong>注意此时是对称加密传输</strong></li>
+<li>至此，整个TLS的握手过程完整，之后就可以开始对称加密的通信了。</li>
+</ul>
+<h2 id="参考文章"><a class="header-anchor" href="#参考文章"></a>参考文章</h2>
+<ul>
+<li><a href="https://blog.csdn.net/whuslei/article/details/6667471">TCP协议中的三次握手和四次挥手(图解)</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/72587882">关于 TCP/IP，必知必会的10个问题</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>备忘</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker常用命令</title>
+    <url>/2020/07/20/%E5%A4%87%E5%BF%98/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<h2 id="镜像管理"><a class="header-anchor" href="#镜像管理"></a>镜像管理</h2>
+<h3 id="配置镜像仓库的国内加速地址"><a class="header-anchor" href="#配置镜像仓库的国内加速地址"></a>配置镜像仓库的国内加速地址</h3>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># Ubuntu16.04+、Debian8+、CentOS7适用</span></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 创建或修改daemon配置文件:/etc/docker/daemon.json,内容如下</span></span><br>&#123;<br>  &quot;registry-mirrors&quot;: [&quot;https://&lt;个人ID&gt;.mirror.aliyuncs.com&quot;]<br>&#125;<br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 保存文件后，重启服务</span></span><br>sudo systemctl daemon-reload<br>sudo systemctl restart docker<br></code></pre></td></tr></table></figure>
+<h3 id="从云端镜像仓库获取新镜像"><a class="header-anchor" href="#从云端镜像仓库获取新镜像"></a>从云端镜像仓库获取新镜像</h3>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 安装最新版镜像</span></span><br>docker pull &lt;镜像名&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 指定镜像版本安装</span></span><br>docker pull &lt;镜像名&gt;:&lt;镜像版本&gt;<br></code></pre></td></tr></table></figure>
+<h2 id="容器管理"><a class="header-anchor" href="#容器管理"></a>容器管理</h2>
+<h3 id="从镜像创建并运行一个新容器"><a class="header-anchor" href="#从镜像创建并运行一个新容器"></a>从镜像创建并运行一个新容器</h3>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 前台运行</span></span><br>docker run &lt;镜像名&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 后台运行</span></span><br>docker run -d &lt;镜像名&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 把容器的一个服务端口映射到宿主机上</span></span><br>docker run -p &lt;宿主机端口&gt;:&lt;容器端口&gt; &lt;镜像名&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 映射多个端口</span></span><br>docker run -p &lt;宿主机端口1&gt;:&lt;容器端口1&gt; \<br>			-p &lt;宿主机端口2&gt;:&lt;容器端口2&gt; \<br>			-p &lt;宿主机端口3&gt;:&lt;容器端口3&gt; &lt;镜像名&gt;<br>			<br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 指定容器名</span></span><br>docker run --name &lt;容器名&gt; &lt;镜像名&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 以交互模式运行,在容器内执行 /bin/bash 命令</span></span><br>docker run -it &lt;镜像名&gt; /bin/bash<br></code></pre></td></tr></table></figure>
+<h3 id="管理已创建的容器"><a class="header-anchor" href="#管理已创建的容器"></a>管理已创建的容器</h3>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 列出运行中的容器,以下二者都可以</span></span><br>docker container ls<br>docker ps<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 列出所有已创建的容器，包括停止运行的</span></span><br>docker container ls -a<br>docker ps -a<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 启动 | 停止 | 重启 | 删除容器</span></span><br>docker [ start | stop | restart | rm ] &lt;容器名或容器ID&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 重命名容器</span></span><br>docker rename &lt;原容器名&gt; &lt;新容器名&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 交互模式在容器内执行 /bin/bash 命令</span></span><br>docker run -it &lt;容器名或容器ID&gt; /bin/bash<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 从宿主机拷贝文件或文件夹到容器</span></span><br>docker cp &lt;宿主机中的文件路径&gt; &lt;容器名或容器ID&gt;:&lt;容器内文件路径&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 从容器拷贝文件或文件夹到宿主机</span></span><br>docker cp &lt;容器名或容器ID&gt;:&lt;容器内文件路径&gt; &lt;宿主机中的文件路径&gt;<br></code></pre></td></tr></table></figure>
+<h2 id="Docker-Compose"><a class="header-anchor" href="#Docker-Compose"></a>Docker Compose</h2>
+<p>使用 Docker Compose 可以很方便地定义和运行多容器应用程序，通过yml文件即可进行配置。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 首先移动到docker-compose.yml配置文件所在目录</span></span><br>cd &lt;docker-compose.yml所在目录&gt;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 前台运行应用程序</span></span><br>docker-compose up<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 后台运行应用程序</span></span><br>docker-compose up -d<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 停止应用程序</span></span><br>docker-compose stop<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 重新启动应用程序</span></span><br>docker-compose restart<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 删除停止运行的容器</span></span><br>docker-compose rm<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 停止运行应用程序并删除对应容器</span></span><br>docker-compose down<br></code></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>备忘</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>正则表达式笔记</title>
+    <url>/2020/04/18/%E5%A4%87%E5%BF%98/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="简介"><a class="header-anchor" href="#简介"></a>简介</h2>
+<blockquote>
+<p>正则表达式是描述一组字符串特征的模式，用来匹配特定的字符串。 ——Ken Thompson</p>
+</blockquote>
+<p>一个正则表达式是一串特殊的字符串，它可以用于匹配一组字符串。比如</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">\d<br></code></pre></td></tr></table></figure>
+<p>就是一个简单的正则表达式，它可以用来匹配0~9范围内的任意<strong>一个数字</strong>。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">^(\(\d&#123;3&#125;\)|^\d&#123;3&#125;[.-]?)?\d&#123;3&#125;[.-]?\d&#123;4&#125;$<br></code></pre></td></tr></table></figure>
+<p>而上面这个式子也是一个正则表达式，只不过复杂了一些，它可以匹配10位的北美电话号码。无论区号是否加括号，数字间是否有句点或连字符，它都可以匹配。</p>
+<p><strong>学习时用到的工具</strong>：</p>
+<blockquote>
+<p><a href="https://regex101.com/">Regexpal网站</a>：可以在线测试正则表达式</p>
+</blockquote>
+<h2 id="基础"><a class="header-anchor" href="#基础"></a>基础</h2>
+<h3 id="字符的匹配"><a class="header-anchor" href="#字符的匹配"></a>字符的匹配</h3>
+<h4 id="字面值匹配"><a class="header-anchor" href="#字面值匹配"></a>字面值匹配</h4>
+<p>最简单的一种，比如一个数字字符串<code>666</code>，可以在目标文本中匹配所有的<code>666</code></p>
+<p><img src="/2020/04/18/%E5%A4%87%E5%BF%98/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%AC%94%E8%AE%B0/fN1TQqSlujEPBCy.png" class="lazy" data-srcset="/2020/04/18/%E5%A4%87%E5%BF%98/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%AC%94%E8%AE%B0/fN1TQqSlujEPBCy.png" srcset="/images/loadingImage.gif" alt></p>
+<h4 id="字符组匹配"><a class="header-anchor" href="#字符组匹配"></a>字符组匹配</h4>
+<p>正则表达式将方括号<code>[]</code>视为特殊的元字符，因此方括号本身不参与匹配，而对括号内容进行匹配。字符组包括以下几种情况：</p>
+<p><code>[aBc]</code>：匹配<code>a</code>,<code>B</code>,<code>c</code>三个字符中的其中一个</p>
+<p><code>[0-9]</code>：匹配0到9范围内的任意数字。要匹配任意3位数字可以用 <code>[0-9][0-9][0-9]</code></p>
+<p><code>[a-z]</code>：匹配所有小写字母</p>
+<p><code>[A-Z]</code>：匹配所有大写字母</p>
+<p><code>[a-zA-Z]</code>：匹配所有大小写字母</p>
+<p><code>[^ARP]</code>：匹配除了<code>A</code>,<code>R</code>,<code>P</code>以外的所有字符</p>
+<p><code>[^a-z]</code>：匹配所有除了小写字母以外的字符</p>
+<h4 id="字符组简写式（元字符）"><a class="header-anchor" href="#字符组简写式（元字符）"></a>字符组简写式（元字符）</h4>
+<p>例如：<code>[0-9]</code>可以简写为<code>\d</code>，它们都能匹配0到9之间的任意一个数字。</p>
+<p>空白字符：</p>
+<p><code>\f</code>：换页符</p>
+<p><code>\n</code>：换行符</p>
+<p><code>\r</code>：回车符</p>
+<p><code>\t</code>：制表符（Tab的缩进）</p>
+<p><code>\v</code>：垂直制表符</p>
+<p><code>\s</code>：任意一个空白字符，等价于 [\f\n\r\t\v]</p>
+<p><code>\S</code>：对<code>\s</code>取非，即任意非空字符</p>
+<p>数字元字符：</p>
+<p><code>\d</code>：匹配任意阿拉伯数字</p>
+<p><code>\D</code>：匹配任意非数字字符（如连字符<code>-</code>)</p>
+<p>字母数字元字符：</p>
+<p><code>\w</code>：大小写字母，下划线和数字，等价于[a-zA-Z0-9]</p>
+<p><code>\W</code>：对<code>\w</code>取非</p>
+<h4 id="任意字符的匹配"><a class="header-anchor" href="#任意字符的匹配"></a>任意字符的匹配</h4>
+<p><code>.</code>：点号（英文句号）可以匹配任意字符（但一般不匹配换行符）。</p>
+<p><code>.</code>是元字符，表示它有特殊的含义，而不是字符本身的含义。如果需要匹配 . ，那么要用 \ 进行转义，即在 . 前面加上<code> \</code> 。</p>
+<h3 id="捕获分组和后向引用"><a class="header-anchor" href="#捕获分组和后向引用"></a>捕获分组和后向引用</h3>
+<p>将<code>\d</code>放到<code>()</code>中，则<code>\d</code>匹配到一个数字的同时该数字被捕获。捕获之后则可以被后向引用。</p>
+<p><code>\1</code>后向引用被捕获的字符。</p>
+<p>例如：正则表达式 <code>(\d)\d\1</code>  可以匹配 <code>101</code> 或者 <code>212</code> , <code>383</code> 等等,但无法匹配 <code>102</code> 。因为<code>\1</code>引用的是那个被捕获的字符，所以这个正则表达式匹配到的一定是某三个相连数字，其中第一个数字和第三个数字一定是相同的。</p>
+<h3 id="量词"><a class="header-anchor" href="#量词"></a>量词</h3>
+<p><code>\d&#123;3&#125;</code>匹配三个相连数字，这里<code>&#123;3&#125;</code>就是一个量词，花括号中可以有多个数字（用逗号<code>,</code>隔开）比如<code>&#123;3,4&#125;</code>表示3个或者4个；</p>
+<p><code>\d-?</code>匹配一个数字，如果该数字之后跟着一个连字符那么连字符也会被匹配到。这里的<code>?</code>也是一个量词，表示0个或1个；</p>
+<p>同理，其他常用的量词还有</p>
+<p><code>+</code>：表示1个或者多个</p>
+<p><code>*</code>：表示0个或者多个</p>
+<h3 id="括选文字符"><a class="header-anchor" href="#括选文字符"></a>括选文字符</h3>
+<p>现在可以看看下面这个比较健壮的表达式了，就是简介中的那个，它匹配10位的北美电话号码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">^(\(\d&#123;3&#125;\)|^\d&#123;3&#125;[.-]?)?\d&#123;3&#125;[.-]?\d&#123;4&#125;$<br></code></pre></td></tr></table></figure>
+<p><code>^</code>匹配行起始位置，即<code>^</code>后面跟着的内容<code>(\(\d&#123;3&#125;\)|^\d&#123;3&#125;[.-]?)</code>必须出现在行首；</p>
+<p><code>\(</code>和<code>\)</code>就是将左右括号转义，让它表示其字面意思，而不是捕获分组的开始结束标志；</p>
+<p><code>|</code>表示或运算，即匹配<code>|</code>两边的内容之一；</p>
+<p><code>[.-]</code>匹配一个可选的点号（这里点号不再匹配任意字符）或连字符；</p>
+<p><code>$</code>匹配行的结束标志</p>
+<p>这个表达式最终匹配十位的北美电话号码，而且括号、连字符或者点号都是可选的。你可以试试不同格式的电话号码，看看它能否匹配。以上正则表达式中的捕获分组并不是必需的。分组是必要的，但是捕获不需要。更好的方法是使用非捕获分组。</p>
+<h3 id="模式匹配"><a class="header-anchor" href="#模式匹配"></a>模式匹配</h3>
+<p>留坑待填</p>
+]]></content>
+      <categories>
+        <category>备忘</category>
+      </categories>
+      <tags>
+        <tag>正则表达式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>git笔记</title>
+    <url>/2021/07/26/%E5%A4%87%E5%BF%98/git%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="概览"><a class="header-anchor" href="#概览"></a>概览</h2>
+<p>与svn等集中式版本控制系统不同，git为分布式版本控制系统，每个开发者都保存整个项目的完整镜像</p>
+<p><img src="/2021/07/26/%E5%A4%87%E5%BF%98/git%E7%AC%94%E8%AE%B0/211915189723300.jpg" class="lazy" data-srcset="/2021/07/26/%E5%A4%87%E5%BF%98/git%E7%AC%94%E8%AE%B0/211915189723300.jpg" srcset="/images/loadingImage.gif" alt="211915189723300.jpg"></p>
+<p>工作区间: 即我们创建的工程文件， 在编辑器可直观显示；</p>
+<p>暂存区: 只能通过git GUI或git shell 窗口显示，提交代码、解决冲突的中转站；</p>
+<p>本地仓库: 只能在git shell 窗口显示，连接本地代码跟远程代码的枢纽，不能联网时本地代码可先提交至该处；</p>
+<p>远程仓库: 即保存我们代码的服务器，本文以公共版本控制系统：github为例，登录github账号后可直观显示；</p>
+<h2 id="Git特点"><a class="header-anchor" href="#Git特点"></a>Git特点</h2>
+<p><strong>直接记录快照，而非比较差异</strong></p>
+<p>Git只关心文件数据的整体是否发生变化，而不是文件内容的具体差异。当文件整体发生变化时（比较指纹信息），则记录快照；若文件整体不变，则只保存上一版本快照的索引，避免重复存储。</p>
+<p><strong>几乎所有操作都是本地执行</strong></p>
+<p>Git中绝大多数操作都只需要访问本地文件和资源，不用联网。</p>
+<p><strong>校验和（checksum）为文件的唯一标识</strong></p>
+<p>一旦文件的完整性收到损坏，那么git就能立刻察觉到。</p>
+<p><strong>多数操作仅添加数据</strong></p>
+<p>常用的Git操作大多仅仅是把数据添加到数据库，因为任何一种不可逆的操作（如删除）都会使回退变得更加困难。</p>
+<p><strong>文件的三种状态</strong></p>
+<p>对于任何一个文件，在Git中只有已提交（committed），已修改（modified）和已暂存（staged）三种状态。</p>
+<p>已提交表示该文件已经被安全地保存在本地数据库；</p>
+<p>已修改表示修改了某个文件，但还没有提交保存；</p>
+<p>已暂存表示把已修改的文件放在下次提交时要保存的清单中了</p>
+<h2 id="使用方法"><a class="header-anchor" href="#使用方法"></a>使用方法</h2>
+<h3 id="获得一个Git仓库"><a class="header-anchor" href="#获得一个Git仓库"></a>获得一个Git仓库</h3>
+<p><strong>git初始化</strong></p>
+<p>要对现有的某个项目开始用 Git 管理，只需到此项目所在的目录，执行：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git init<br></code></pre></td></tr></table></figure>
+<p>初始化后，在当前目录下会出现一个名为 .git 的目录，所有 Git 需要的数据和资源都存放在这个目录中。不过目前，仅仅是按照既有的结构框架初始化好了里边所有的文件和目录，但我们还没有开始跟踪管理项目中的任何一个文件。</p>
+<p>如果当前目录下有几个文件想要纳入版本控制，需要先用 git add 命令告诉 Git 开始对这些文件进行跟踪，然后提交：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git add *.c		#把所有的c源码纳入版本控制（加入暂存区）<br>git add README	#把README加入版本控制（加入暂存区）<br>git commit -m &#x27;initial project version&#x27;		#提交代码到本地仓库<br></code></pre></td></tr></table></figure>
+<p><strong>git clone</strong></p>
+<p><code>git clone</code>用于从服务器上获取git仓库，并且获取的是项目历史的所有数据（每一个文件的每一个版本），服务器上有的数据克隆之后本地也都有了。实际上，即便服务器的磁盘发生故障，用任何一个克隆出来的客户端都可以重建服务器上的仓库，回到当初克隆时的状态。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git clone [url]<br></code></pre></td></tr></table></figure>
+<p>如果希望在克隆的时候，自己定义要新建的项目目录名称，可以在上面的命令末尾指定新的名字：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git clone git://github.com/schacon/grit.git mygrit<br></code></pre></td></tr></table></figure>
+<h3 id="状态检查"><a class="header-anchor" href="#状态检查"></a>状态检查</h3>
+<p><strong>查看当前项目的git状态</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git status	## 在项目根目录下运行<br></code></pre></td></tr></table></figure>
+<p><strong>对比文件修改情况</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git diff<br>git diff --cached<br></code></pre></td></tr></table></figure>
+<p><code>git diff</code>命令比较的是工作目录中当前文件和暂存区域快照之间的差异，也就是修改之后还没有暂存起来的变化内容</p>
+<p>若要看已经暂存起来的文件和上次提交时的快照之间的差异，可以用 <code>git diff --cached</code>（Git 1.6.1 及更高版本还允许使用<code>git diff --staged</code>，效果是相同的，但更好记些。）</p>
+<p><strong>查看提交历史</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git log [-p] [-2]<br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># -p 表示展开显示每次提交的内容差异，-2 表示仅展示最近的两次提交</span></span><br></code></pre></td></tr></table></figure>
+<p><a href="https://blog.csdn.net/bdss58/article/details/40537859">理解head和master</a></p>
+<h3 id="基础配置"><a class="header-anchor" href="#基础配置"></a>基础配置</h3>
+<p><strong>查看git配置信息</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git config -l ## 显示所有当前配置<br>git config --global -l  ## 显示所有全局配置<br>git config --local -l  ## 显示所有当前仓库独有配置<br>git config --unset user.name ## 删除 user.name 配置项<br></code></pre></td></tr></table></figure>
+<p><strong>配置远程地址</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git remote add &lt;name&gt; &lt;url&gt;  ## 添加远程地址，可添加多个<br>git remote remove &lt;name&gt; ## 删除远程地址<br></code></pre></td></tr></table></figure>
+<p><strong>记住密码</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git config credential.helper store ## 设置记住密码<br>git config credential.helper &#x27;cache --timeout 0&#x27; ## 15min后清除密码<br></code></pre></td></tr></table></figure>
+<p><strong>.gitignore</strong></p>
+<p>一般我们总会有些文件无需纳入 Git 的管理，也不希望它们总出现在未跟踪文件列表。通常都是些自动生成的文件，比如日志文件，或者编译过程中创建的临时文件等。我们可以在项目根目录下创建如下一个名为 .gitignore 的文件，列出要忽略的文件模式</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><code class="hljs text">## 此为注释 – 将被 Git 忽略<br>*.a       ## 忽略所有 .a 结尾的文件<br>!lib.a    ## 但 lib.a 除外<br>/TODO     ## 仅仅忽略项目根目录下的 TODO 文件，不包括 subdir/TODO<br>build/    ## 忽略 build/ 目录下的所有文件<br>doc/*.txt ## 会忽略 doc/notes.txt 但不包括 doc/server/arch.txt<br>*.[oa]    ## 忽略所有以 .o 或 .a 结尾的文件（编译过程文件）<br>*~        ## 忽略所有以波浪符 ~ 结尾的文件（文件副本）<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>文件 .gitignore 的格式规范如下：<br>
+所有空行或者以注释符号<code>＃</code>开头的行都会被 Git 忽略。<br>
+可以使用标准的 glob 模式匹配。<code> *</code> 匹配模式最后跟反斜杠<code>/</code>说明要忽略的是目录。<br>
+要忽略指定模式以外的文件或目录，可以在模式前加上叹号<code>!</code>取反</p>
+</blockquote>
+<h3 id="工作区-暂存区"><a class="header-anchor" href="#工作区-暂存区"></a>工作区&lt;-&gt;暂存区</h3>
+<h4 id="add"><a class="header-anchor" href="#add"></a>add</h4>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git add [options] [&lt;file&gt;…]<br></code></pre></td></tr></table></figure>
+<p><code>git add</code>是一个多功能命令，它可以将项目文件纳入跟踪范围，也可以将所做的修改暂存到暂存区，<code>git commit</code>只会把已加入暂存区的文件版本提交到本地仓库，所以每对项目文件做一次修改，都要使用<code>git add</code>命令将它加入暂存区，否则提交的可能就是修改之前的版本了。</p>
+<h4 id="文件操作"><a class="header-anchor" href="#文件操作"></a>文件操作</h4>
+<p><strong>git rm</strong></p>
+<p><code>git rm &lt;filename&gt;</code>用来将不需要的文件同时从Git仓库和工作目录中删除，如果只是手动从工作目录中删除该文件，则还会在&quot;Changed but not updated&quot;中看到。</p>
+<p>如果希望在工作目录中保留文件，只从git仓库中删除，那么可以加上<code>--cached</code>参数</p>
+<p><strong>git mv</strong></p>
+<p>常用于文件移动和重命名</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git mv file_from file_to<br></code></pre></td></tr></table></figure>
+<h4 id="回滚"><a class="header-anchor" href="#回滚"></a>回滚</h4>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git restore &lt;file&gt;    # 丢弃工作区的修改（包括对文件自身的操作，如添加文件、删除文件）<br>git restore --staged &lt;file&gt;    #将暂存区的修改重新放回工作区（包括对文件自身的操作，如添加文件、删除文件）<br></code></pre></td></tr></table></figure>
+<h4 id="贮藏更改"><a class="header-anchor" href="#贮藏更改"></a>贮藏更改</h4>
+<p>场景一：当你在工作区做了一些修改，并想要将这些修改提交到git仓库时，你发现共同开发这个项目的同事已经提交了一些内容。这时候你如果直接提交并推送到远程仓库，就会因为分支冲突而推送失败。</p>
+<p>场景二：当你在分支<code>dev</code>做了一些修改之后，想切换到<code>master</code>分支去做一些事情，但又不想为做到一半的工作创建一次提交，那么你就需要将你所做的修改贮藏起来。</p>
+<p>为了解决这些问题，我们可以使用<code>git stash</code>命令，将我们的在工作区所做的更改贮藏到一个栈上，并且在任何时候重新应用这些改动（甚至在不同的分支上）</p>
+<p>常用的<code>git stash</code>命令用法如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git stash save &quot;some messages&quot; # 贮藏工作区的修改，将工作区变成上次提交时的样子<br>git stash list  # 列出已经贮藏的内容<br>git stash apply  # 将最近一次的贮藏应用到当前分支<br>git stash apply stash@&#123;2&#125;  # 将 stash@&#123;2&#125; 这个贮藏应用到当前分支<br>git stash pop  # 将最近一次的贮藏应用到当前分支并删除该贮藏<br></code></pre></td></tr></table></figure>
+<p>更详细的说明可以参考：<a href="https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E8%B4%AE%E8%97%8F%E4%B8%8E%E6%B8%85%E7%90%86">https://git-scm.com/book/zh/v2/Git-工具-贮藏与清理</a></p>
+<h3 id="暂存区-本地仓库"><a class="header-anchor" href="#暂存区-本地仓库"></a>暂存区&lt;-&gt;本地仓库</h3>
+<p><strong>git commit</strong></p>
+<p>一般使用<code>git comit -m &quot;your comment&quot;</code>将代码提交到本地仓库，提交后工作区清空，再次修改则需要重新<code>git add</code>，如果不加<code>-m</code>参数，那么会启动文本编辑器以输入本次提交的说明。</p>
+<p>每一次运行提交操作，都是对你项目作一次快照，以后可以回到这个状态，或者进行比较。</p>
+<p>尽管使用暂存区域的方式可以精心准备要提交的细节，但有时候这么做略显繁琐。Git 提供了一个跳过使用暂存区域的方式，只要在提交的时候，加上<code>-a</code> 选项，Git 就会自动把所有已经跟踪过的文件暂存起来一并提交，从而跳过 <code>git add</code> 步骤。</p>
+<h3 id="本地仓库-远程仓库"><a class="header-anchor" href="#本地仓库-远程仓库"></a>本地仓库&lt;-&gt;远程仓库</h3>
+<h4 id="git-push"><a class="header-anchor" href="#git-push"></a>git push</h4>
+<p>将本地的分支版本上传到远程并合并</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git push &lt;远程主机名&gt; &lt;本地分支名&gt;:&lt;远程分支名&gt;<br></code></pre></td></tr></table></figure>
+<h4 id="git-fetch"><a class="header-anchor" href="#git-fetch"></a>git fetch</h4>
+<p>从远程仓库下载最新的commit，并且同时保留本地分支head和远程分支remotes，需要另外使用<code>git merge</code>合并分支</p>
+<h4 id="git-pull"><a class="header-anchor" href="#git-pull"></a>git pull</h4>
+<p>下载远程分支中最新的commit并合并（不建议使用，可能出现未解决代码冲突的情况）</p>
+<h3 id="操作撤销"><a class="header-anchor" href="#操作撤销"></a>操作撤销</h3>
+<p>在进行文件修改等操作后，使用<code>git status</code>查看状态，可以看到git给出的撤销提示</p>
+<p><img src="/2021/07/26/%E5%A4%87%E5%BF%98/git%E7%AC%94%E8%AE%B0/image-20210708151055459.png" class="lazy" data-srcset="/2021/07/26/%E5%A4%87%E5%BF%98/git%E7%AC%94%E8%AE%B0/image-20210708151055459.png" srcset="/images/loadingImage.gif" alt="image-20210708151055459"></p>
+<p>更多参考：<a href="https://blog.csdn.net/Sweet_19BaBa/article/details/111950384">git checkout，git restore 和 git reset</a></p>
+<h4 id="reset版本回退"><a class="header-anchor" href="#reset版本回退"></a>reset版本回退</h4>
+<p>首先<code>git log</code>查看历史提交的版本信息，得到各个commit的id，即其哈希值</p>
+<p>然后使用<code>git reset --hard &lt;commitId&gt;</code>切换到各个版本提交时的状态（清空暂存区），如果版本已提交到远程仓库，则需要在本地仓库回退后使用<code>git push -f</code>将操作强制同步到远程仓库。</p>
+<p>但实际上回退之前的版本还是存在的，使用<code>git reflog</code>可以查看历史版本记录，找到已提交过的任何一个版本的commitId，通过commitId仍可以切回最新的未回退的版本。</p>
+<h4 id="revert版本回退"><a class="header-anchor" href="#revert版本回退"></a>revert版本回退</h4>
+<p>使用<code>git reset</code>回退公共远程分支的版本后，其他人都需要用远程master分支覆盖本地master分支，显然，这不是优雅的回退方法，而<code>revert</code>命令则可以避免这个问题。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git revert HEAD                     //撤销最近一次提交<br>git revert HEAD~1                   //撤销最近2次提交<br>git revert 0ffaacc                  //撤销0ffaacc这次提交<br></code></pre></td></tr></table></figure>
+<p>git revert 命令意思是撤销某次提交。它会产生一个新的提交，虽然代码回退了，但是版本依然是向前的。所以，当你用revert回退完，所有人pull之后，代码也自动回退了。</p>
+<h3 id="分支管理"><a class="header-anchor" href="#分支管理"></a>分支管理</h3>
+<h4 id="分支新建、切换、删除"><a class="header-anchor" href="#分支新建、切换、删除"></a>分支新建、切换、删除</h4>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git branch                  #列出已有分支<br>git branch &lt;branchname&gt;     #创建新分支<br>git checkout &lt;branchname&gt;   #切换到分支<br>git branch -d &lt;branchname&gt;  #删除分支<br></code></pre></td></tr></table></figure>
+<p>在一个分支进行文件修改、新建、删除等操作在commit后不会影响其他分支。</p>
+<h4 id="分支合并"><a class="header-anchor" href="#分支合并"></a>分支合并</h4>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git merge &lt;branchname&gt;    #把 &lt;branchname&gt; 分支合并到当前分支<br></code></pre></td></tr></table></figure>
+<p>在将<code>branch2</code>合并到<code>branch1</code>的过程中，branch2中新建文件、删除原有文件、修改原有文件等操作将同步到<code>branch1</code>，当两个分支都做出修改时，可能会出现代码冲突，这时候需要我们手动修改解决冲突后再次提交才能合并成功。</p>
+<p>如果我们的主分支 <code>master</code> ，在 checkout 一个新的分支（<code>bugfix</code>）后，产生了多次提交，这时候我们将<code>bugfix</code>分支合并到<code>master</code>，<code>bugfix</code>分支上新产生的所有提交记录都会同步到<code>master</code>，导致主线版本的提交记录杂乱。如果我们想要在合并分支时只产生一条提交记录，则需要使用<code>--squash</code>参数，</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git merge --squash bugfix<br></code></pre></td></tr></table></figure>
+<h2 id="常见问题"><a class="header-anchor" href="#常见问题"></a>常见问题</h2>
+<ol>
+<li>
+<p>新建GitHub仓库，第一次push时验证账号密码失败</p>
+<p>一开始提示输入GitHub的用户名口令，正确输入后还是验证失败。这时候会出现新的登录窗口，提示通过OpenSSH登录到GitHub，这时候，输入GitHub用户名和access token（settings-developer settings-Personal access tokens）即可登录成功</p>
+</li>
+<li>
+<p>配置免密登录</p>
+<p><a href="https://www.cnblogs.com/qishuaiRisen/p/16650513.html">https://www.cnblogs.com/qishuaiRisen/p/16650513.html</a></p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>备忘</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>网络代理设置</title>
+    <url>/2021/07/08/%E5%A4%87%E5%BF%98/%E7%BD%91%E7%BB%9C%E4%BB%A3%E7%90%86%E8%AE%BE%E7%BD%AE/</url>
+    <content><![CDATA[<h2 id="命令行代理设置"><a class="header-anchor" href="#命令行代理设置"></a>命令行代理设置</h2>
+<p>设置命令行代理（设置环境变量,命令行关闭后则失效）</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># cmd</span></span><br>set HTTP_PROXY=http://127.0.0.1:10809<br>set HTTPS_PROXY=http://127.0.0.1:10809<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># powershell 默认使用系统代理，无需手动配置</span></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># bash</span></span><br>export http_proxy=&quot;http://127.0.0.1:10809&quot;<br>export https_proxy=&quot;http://127.0.0.1:10809&quot;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 测试是否设置成功不要ping google，因为ping命令用的是ICMP协议。正确做法是</span></span><br>curl www.google.com<br></code></pre></td></tr></table></figure>
+<h2 id="git代理设置"><a class="header-anchor" href="#git代理设置"></a>git代理设置</h2>
+<p>设置永久有效</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">git config --global http.proxy http://127.0.0.1:10809	<br>git config --global https.proxy https://127.0.0.1:10809<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-comment"># 若为socks代理，则为：</span></span><br>git config --global http.proxy &#x27;socks5://127.0.0.1:10808&#x27;<br>git config --global https.proxy &#x27;socks5://127.0.0.1:10808&#x27;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">查看代理是否设置成功</span><br>git config --global --list<br></code></pre></td></tr></table></figure>
+<h2 id="go代理设置"><a class="header-anchor" href="#go代理设置"></a>go代理设置</h2>
+<p>Bash (Linux / macOS)</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">export GOPROXY=https://goproxy.io,direct<br></code></pre></td></tr></table></figure>
+<p>PowerShell (Windows)</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$</span><span class="language-bash"><span class="hljs-built_in">env</span>:GOPROXY = <span class="hljs-string">&quot;https://goproxy.io,direct&quot;</span></span><br></code></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>备忘</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
       </tags>
   </entry>
 </search>
