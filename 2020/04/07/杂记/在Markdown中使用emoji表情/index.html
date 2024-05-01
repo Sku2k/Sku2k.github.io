@@ -52,6 +52,11 @@
 
     
     
+        <link rel="stylesheet" id="hl-default-theme" href="/css/highlight/github.css" media="none" onload="this.media='all'">
+        
+    
+
+    
     
 
     
@@ -164,15 +169,15 @@
 <p>首先打开Node.js的命令行并移动到你的博客根目录下</p>
 <p><img src="/2020/04/07/%E6%9D%82%E8%AE%B0/%E5%9C%A8Markdown%E4%B8%AD%E4%BD%BF%E7%94%A8emoji%E8%A1%A8%E6%83%85/jQKAbRWvhGMDFgx.png" class="lazy" data-srcset="/2020/04/07/%E6%9D%82%E8%AE%B0/%E5%9C%A8Markdown%E4%B8%AD%E4%BD%BF%E7%94%A8emoji%E8%A1%A8%E6%83%85/jQKAbRWvhGMDFgx.png" srcset="/images/loadingImage.gif" alt></p>
 <p>卸载原有的<code>hexo-renderer-marked</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">npm un hexo-renderer-marked -S<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm un hexo-renderer-marked -S</span><br></pre></td></tr></table></figure>
 <p>再安装<code>hexo-renderer-markdown-it</code> ：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">npm i hexo-renderer-markdown-it -S<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i hexo-renderer-markdown-it -S</span><br></pre></td></tr></table></figure>
 <p>完成之后安装所需的插件：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">npm i markdown-it-emoji -S<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i markdown-it-emoji -S</span><br></pre></td></tr></table></figure>
 <p>最后打开根目录下的<code>_config.yml</code>文件，添加以下配置：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">markdown:<br>  render:<br>    html: true ## 在 markdown 文本中支持 html tag 标签<br>    xhtmlOut: false ## 需要 xtml 文档，使用 &lt;br /&gt; 替代 &lt;br&gt;<br>    breaks: true ## 用 &lt;br&gt; 开始新的一行<br>    linkify: true ## 自动将 可能是链接的内容转换成链接<br>    typographer: true ## 印刷标识转换<br>  plugins:<br>    - markdown-it-emoji ## emoji表情插件<br>    - markdown-it-abbr ## 可选<br>    - markdown-it-footnote ## 可选<br>    - markdown-it-ins ## 可选，<br>    - markdown-it-sub ## 可选，下标，如H2O<br>    - markdown-it-sup ## 可选，上标，如2^10<br>  anchors:<br>    level: 2<br>    collisionSuffix: &#x27;&#x27;<br>    permalink: false,<br>    permalinkClass: &#x27;header-anchor&#x27;<br>    permalinkSymbol: &#x27;&#x27;<br>    case: 0<br>    separator: &#x27;&#x27;<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">markdown:</span><br><span class="line">  render:</span><br><span class="line">    html: true ## 在 markdown 文本中支持 html tag 标签</span><br><span class="line">    xhtmlOut: false ## 需要 xtml 文档，使用 &lt;br /&gt; 替代 &lt;br&gt;</span><br><span class="line">    breaks: true ## 用 &lt;br&gt; 开始新的一行</span><br><span class="line">    linkify: true ## 自动将 可能是链接的内容转换成链接</span><br><span class="line">    typographer: true ## 印刷标识转换</span><br><span class="line">  plugins:</span><br><span class="line">    - markdown-it-emoji ## emoji表情插件</span><br><span class="line">    - markdown-it-abbr ## 可选</span><br><span class="line">    - markdown-it-footnote ## 可选</span><br><span class="line">    - markdown-it-ins ## 可选，</span><br><span class="line">    - markdown-it-sub ## 可选，下标，如H2O</span><br><span class="line">    - markdown-it-sup ## 可选，上标，如2^10</span><br><span class="line">  anchors:</span><br><span class="line">    level: 2</span><br><span class="line">    collisionSuffix: &#x27;&#x27;</span><br><span class="line">    permalink: false,</span><br><span class="line">    permalinkClass: &#x27;header-anchor&#x27;</span><br><span class="line">    permalinkSymbol: &#x27;&#x27;</span><br><span class="line">    case: 0</span><br><span class="line">    separator: &#x27;&#x27;</span><br></pre></td></tr></table></figure>
 <p>然后保存退出，再重新加载一下hexo即可。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">hexo clean<br>hexo generate<br>hexo server<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
 <p>参考来源： <a target="_blank" rel="noopener" href="https://zucchiniy.cn/archives/953e2b.html">ZucchinY的博客</a></p>
 
     </div>

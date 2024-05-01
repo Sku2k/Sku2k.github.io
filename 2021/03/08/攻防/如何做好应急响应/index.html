@@ -52,6 +52,11 @@
 
     
     
+        <link rel="stylesheet" id="hl-default-theme" href="/css/highlight/github.css" media="none" onload="this.media='all'">
+        
+    
+
+    
     
 
     
@@ -213,28 +218,28 @@
 <p>检查历史命令</p>
 </li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> ~/bash_history &gt;&gt; history.txt<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/bash_history &gt;&gt; history.txt</span><br></pre></td></tr></table></figure>
 <ul>
 <li>检查网络连接/开放端口</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash">netstat -antlp | more<br><br><span class="hljs-comment">#查看 PID 所对应的进程文件路径</span><br>file /proc/<span class="hljs-variable">$PID</span>/exe<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">netstat -antlp | more</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看 PID 所对应的进程文件路径</span></span><br><span class="line">file /proc/<span class="variable">$PID</span>/exe</span><br></pre></td></tr></table></figure>
 <ul>
 <li>检查异常进程</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash">ps aux | grep pid<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux | grep pid</span><br></pre></td></tr></table></figure>
 <p><img src="/2021/03/08/%E6%94%BB%E9%98%B2/%E5%A6%82%E4%BD%95%E5%81%9A%E5%A5%BD%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/image-20210313142418258.png" class="lazy" data-srcset="/2021/03/08/%E6%94%BB%E9%98%B2/%E5%A6%82%E4%BD%95%E5%81%9A%E5%A5%BD%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/image-20210313142418258.png" srcset="/images/loadingImage.gif" alt="image-20210313142418258"></p>
 <ul>
 <li>检查开机启动项</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">ls</span> /etc/init.d/<br><br><span class="hljs-built_in">ls</span> -l /etc/rc3.d/<br><span class="hljs-built_in">ls</span> -l /etc/rc5.d/<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> /etc/init.d/</span><br><span class="line"></span><br><span class="line"><span class="built_in">ls</span> -l /etc/rc3.d/</span><br><span class="line"><span class="built_in">ls</span> -l /etc/rc5.d/</span><br></pre></td></tr></table></figure>
 <ul>
 <li>检查定时任务</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">ls</span> -al /var/spool/cron/* <br><span class="hljs-built_in">cat</span> /etc/crontab<br>/etc/cron.d/*<br>/etc/cron.daily/* <br>/etc/cron.hourly/* <br>/etc/cron.monthly/*<br>/etc/cron.weekly/<br><br><span class="hljs-comment">#查看目录下所有文件</span><br>more /etc/cron.d/*<br><br>/etc/anacrontab<br>/var/spool/anacron/*<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -al /var/spool/cron/* </span><br><span class="line"><span class="built_in">cat</span> /etc/crontab</span><br><span class="line">/etc/cron.d/*</span><br><span class="line">/etc/cron.daily/* </span><br><span class="line">/etc/cron.hourly/* </span><br><span class="line">/etc/cron.monthly/*</span><br><span class="line">/etc/cron.weekly/</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看目录下所有文件</span></span><br><span class="line">more /etc/cron.d/*</span><br><span class="line"></span><br><span class="line">/etc/anacrontab</span><br><span class="line">/var/spool/anacron/*</span><br></pre></td></tr></table></figure>
 <ul>
 <li>检查服务</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#CentOS</span><br>chkconfig  --list  <span class="hljs-comment">#查看服务自启动状态，可以看到所有的RPM包安装的服务</span><br><span class="hljs-comment">#Debian</span><br>service --status-all<br>systemctl list-units<br><span class="hljs-comment">#源码包安装的服务位置</span><br>/usr/local/<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#CentOS</span></span><br><span class="line">chkconfig  --list  <span class="comment">#查看服务自启动状态，可以看到所有的RPM包安装的服务</span></span><br><span class="line"><span class="comment">#Debian</span></span><br><span class="line">service --status-all</span><br><span class="line">systemctl list-units</span><br><span class="line"><span class="comment">#源码包安装的服务位置</span></span><br><span class="line">/usr/local/</span><br></pre></td></tr></table></figure>
 <ul>
 <li>
 <p>检查异常文件</p>
@@ -246,7 +251,7 @@
 <p>找出同一时间范围内创建的文件？</p>
 </li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash">find ./ -iname <span class="hljs-string">&quot;*&quot;</span> -atime 1 -<span class="hljs-built_in">type</span> f <br><span class="hljs-comment">#找出 ./ 下一天前访问过的文件</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find ./ -iname <span class="string">&quot;*&quot;</span> -atime 1 -<span class="built_in">type</span> f </span><br><span class="line"><span class="comment">#找出 ./ 下一天前访问过的文件</span></span><br></pre></td></tr></table></figure>
 <ul>
 <li>检查日志文件</li>
 </ul>

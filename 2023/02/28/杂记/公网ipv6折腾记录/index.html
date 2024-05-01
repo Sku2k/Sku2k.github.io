@@ -52,6 +52,11 @@
 
     
     
+        <link rel="stylesheet" id="hl-default-theme" href="/css/highlight/github.css" media="none" onload="this.media='all'">
+        
+    
+
+    
     
 
     
@@ -185,7 +190,7 @@
 <p>保存应用后，将电脑通过网线或者WIFI直接连上光猫，确认是否获取到公网ipv6地址。移动的ipv6是2409开头，电信和联通则是240e和2408，如果没有就需要尝试其他的获取地址方式了。</p>
 <p><img src="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301001400712.png" class="lazy" data-srcset="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301001400712.png" srcset="/images/loadingImage.gif" alt="image-20230301001400712"></p>
 <p>电脑直连能够获取公网ipv6地址之后，就可以开个服务看看外网能否访问了。我这里直接用python自带的http模块去监听本机8888端口</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash">python -m http.server 8888<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m http.server 8888</span><br></pre></td></tr></table></figure>
 <p>再使用在线测试工具 <a target="_blank" rel="noopener" href="https://ipw.cn/ipv6webcheck/">https://ipw.cn/ipv6webcheck/</a> 判断能否访问（测试时暂时关闭本机和光猫的防火墙）</p>
 <p><img src="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301003503371.png" class="lazy" data-srcset="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301003503371.png" srcset="/images/loadingImage.gif" alt="image-20230301003503371"></p>
 <p>访问失败，但不知道是哪里出了问题，于是摸索了很久，最后试着打开了光猫的ipv6虚拟服务器功能，填入想要开放公网访问的端口，发现连接成功，估计是光猫的默认策略里禁用了传入的连接，需要在这里单独配置后才能被互联网访问。</p>
