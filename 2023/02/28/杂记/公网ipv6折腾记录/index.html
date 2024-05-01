@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+        <link rel="shortcut icon" href="/images/favicon.ico">
+    
+    
+        <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    
+    
+        <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    
+    
+        <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    
+    
+        <link rel="mask-icon" href="/images/safari-pinned-tab.svg">
+    
+
+
+    <!-- meta -->
+
+
+<title>记一次公网IPv6配置 | Dawnyh&#39;s Blog</title>
+
+
+    <meta name="keywords" content="计算机网络">
+
+
+
+
+    <!-- OpenGraph -->
+
+
+    
+<link rel="stylesheet" href="/css/style/main.css">
+ 
+
+    
+    
+    
+
+    
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/" class="button">
+            <span class="logo__text">Dawnyh&#39;s Blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/" class="navbar-menu button">首页</a>
+                
+                    <a href="/tags/" class="navbar-menu button">标签</a>
+                
+                    <a href="/archives/" class="navbar-menu button">归档</a>
+                
+                    <a href="/friends/" class="navbar-menu button">友链</a>
+                
+            </div>
+        
+        
+        
+    <a href="/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/" class="dropdown-menu button">首页</a>
+                
+                    <a href="/tags/" class="dropdown-menu button">标签</a>
+                
+                    <a href="/archives/" class="dropdown-menu button">归档</a>
+                
+                    <a href="/friends/" class="dropdown-menu button">友链</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        记一次公网IPv6配置
+    </h1>
+    <div class="post-title__meta">
+        <a href="/archives/2023/02/" class="post-meta__date button">2023-02-28</a>
+        
+    <span class="separate-dot"></span><a href="/categories/%E6%9D%82%E8%AE%B0/" class="button">杂记</a>
+
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+    <aside class="post-side">
+        <div class="post-side__toc">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%85%AC%E7%BD%91ip"><span class="toc-number">2.</span> <span class="toc-text">获取公网ip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">防火墙配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%9F%E5%90%8D%E9%85%8D%E7%BD%AE"><span class="toc-number">4.</span> <span class="toc-text">域名配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">5.</span> <span class="toc-text">注意事项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TODO"><span class="toc-number">6.</span> <span class="toc-text">TODO</span></a></li></ol>
+        </div>
+    </aside>
+    <a class="btn-toc button" id="btn-toc" tabindex="0">
+        <svg viewBox="0 0 1024 1024" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M128 256h64V192H128zM320 256h576V192H320zM128 544h64v-64H128zM320 544h576v-64H320zM128 832h64v-64H128zM320 832h576v-64H320z" fill="currentColor"></path>
+        </svg>
+    </a>
+    <div class="toc-menus" id="toc-menus">
+        <div class="toc-title">文章目录</div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%85%AC%E7%BD%91ip"><span class="toc-number">2.</span> <span class="toc-text">获取公网ip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">防火墙配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%9F%E5%90%8D%E9%85%8D%E7%BD%AE"><span class="toc-number">4.</span> <span class="toc-text">域名配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">5.</span> <span class="toc-text">注意事项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TODO"><span class="toc-number">6.</span> <span class="toc-text">TODO</span></a></li></ol>
+    </div>
+
+
+<article class="post post__with-toc content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <h2 id="前言"><a class="header-anchor" href="#前言"></a>前言</h2>
+<p>前段时间突发奇想，想用内网穿透的方式把家里旧电脑上开启的一些服务给暴露在公网上，这样就可以在公司远程访问了。后面查了查资料，发现相比于内网穿透，直接用公网ip去访问更加经济实惠，并且访问速度更快。于是就开始折腾起了公网ip的配置，最后达到的效果如下：</p>
+<ol>
+<li>开放任意的端口和服务</li>
+<li>通过绑定的域名访问主机</li>
+<li>动态修改域名解析配置</li>
+</ol>
+<p>需要注意的是，ipv6通信需要过程中的所有网络设备都支持且启用了ipv6网络，目前常见的光猫、路由器都支持ipv6网络，但大多默认没有开启，所以这俩就是我们主要需要配置的地方。这篇文章把折腾的过程记录一下，供其他感兴趣的朋友参考，如有错误也请大家及时指正。</p>
+<h2 id="获取公网ip"><a class="header-anchor" href="#获取公网ip"></a>获取公网ip</h2>
+<p>因为公网ipv4资源紧张，现在三大运营商基本是不会给家庭宽带分配独立的公网ipv4地址了，但所幸除了ipv4，我们还有ipv6，毕竟128位的地址空间，完全不用担心不够用。</p>
+<p>ipv6的支持目前已经很普及了，但可能是为了避免不必要的麻烦，光猫的默认设置里面一般是没有开启ipv6选项的。所以我们需要先连上宽带（有线或者无线网络都行），再使用超级管理员账号登录光猫的配置页面去打开这个功能。</p>
+<p><img src="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230228215725750.png" class="lazy" data-srcset="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230228215725750.png" srcset="/images/loadingImage.gif" alt="image-20230228215725750"></p>
+<blockquote>
+<p>默认配置地址为 <a target="_blank" rel="noopener" href="http://192.168.1.1">http://192.168.1.1</a></p>
+<p>默认超级管理员账号密码：</p>
+<p>移动：CMCCAdmin/aDm8H%MdA</p>
+<p>电信：telecomadmin/nE7jA%5m</p>
+<p>联通：CUAdmin/CUAdmin</p>
+</blockquote>
+<p>以移动光猫为例，登录后进入网络-宽带设置页面，选择<code>x_INTERNET_xxx</code>连接进行因特网配置</p>
+<p><img src="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230228220842592.png" class="lazy" data-srcset="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230228220842592.png" srcset="/images/loadingImage.gif" alt="image-20230228220842592"></p>
+<p>网上查找到的资料大多是使用路由器进行拨号上网，而光猫使用桥接模式，这样配置起来会轻松一些。但由于我这里宽带是房东办的，我不知道密码，所以只能保持光猫拨号，路由器再从光猫这里动态地获取ip地址。所以在这里我只需要打开ipv6地址的自动获取即可，如下图所示：</p>
+<p><img src="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230228233437568.png" class="lazy" data-srcset="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230228233437568.png" srcset="/images/loadingImage.gif" alt="image-20230228233437568"></p>
+<p>地址和前缀的获取方式这里可能需要自己尝试下，管不管用取决于运营商开启的分配策略。NPTv6就是ipv6版的NAT协议，如果配置好获取地址和前缀的方式后，电脑直接连接光猫能够获取公网ipv6地址，那么就不需要打开了。</p>
+<p>完成宽带设置后，还需要确认下LAN侧地址配置，如下图所示：</p>
+<p><img src="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230228235426926.png" class="lazy" data-srcset="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230228235426926.png" srcset="/images/loadingImage.gif" alt="image-20230228235426926"></p>
+<p>保存应用后，将电脑通过网线或者WIFI直接连上光猫，确认是否获取到公网ipv6地址。移动的ipv6是2409开头，电信和联通则是240e和2408，如果没有就需要尝试其他的获取地址方式了。</p>
+<p><img src="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301001400712.png" class="lazy" data-srcset="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301001400712.png" srcset="/images/loadingImage.gif" alt="image-20230301001400712"></p>
+<p>电脑直连能够获取公网ipv6地址之后，就可以开个服务看看外网能否访问了。我这里直接用python自带的http模块去监听本机8888端口</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash">python -m http.server 8888<br></code></pre></td></tr></table></figure>
+<p>再使用在线测试工具 <a target="_blank" rel="noopener" href="https://ipw.cn/ipv6webcheck/">https://ipw.cn/ipv6webcheck/</a> 判断能否访问（测试时暂时关闭本机和光猫的防火墙）</p>
+<p><img src="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301003503371.png" class="lazy" data-srcset="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301003503371.png" srcset="/images/loadingImage.gif" alt="image-20230301003503371"></p>
+<p>访问失败，但不知道是哪里出了问题，于是摸索了很久，最后试着打开了光猫的ipv6虚拟服务器功能，填入想要开放公网访问的端口，发现连接成功，估计是光猫的默认策略里禁用了传入的连接，需要在这里单独配置后才能被互联网访问。</p>
+<p><img src="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301003924298.png" class="lazy" data-srcset="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301003924298.png" srcset="/images/loadingImage.gif" alt="image-20230301003924298"></p>
+<p><img src="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301004108524.png" class="lazy" data-srcset="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301004108524.png" srcset="/images/loadingImage.gif" alt="image-20230301004108524"></p>
+<p>这时候我们就可以继续设置路由器了，这里就比较简单了。进入路由器的管理页面，不同品牌和型号的路由器配置方法不同，具体方法可以到生产厂商官网查找对应的配置说明。我这里用的是华硕的RT-AC68U，在高级设置-IPv6中配置ipv6地址获取方式，根据官网的文档，选择穿透模式（Passthrough）即可。</p>
+<p><img src="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301100022508.png" class="lazy" data-srcset="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301100022508.png" srcset="/images/loadingImage.gif" alt="image-20230301100022508"></p>
+<p>这个模式会把路由器的WAN口、LAN口和WiFi桥接起来，一级路由（即光猫）下发的ipv6地址通过网桥直接分配给二级路由下的终端，可以理解为在ipv6网络中，我的路由器是以交换机模式工作的。</p>
+<p>配置完后，同样暂时关闭路由器的ipv6防火墙，电脑连接路由器的WiFi，看是否能够像直连光猫一样获取公网ipv6，获取到了基本就没问题了。</p>
+<h2 id="防火墙配置"><a class="header-anchor" href="#防火墙配置"></a>防火墙配置</h2>
+<p>毕竟是直接暴露在公网上，访问控制还是得做的。主要是光猫、路由器、电脑本机上的防火墙策略需要开启。</p>
+<p>光猫的配置页面里面，在安全-防火墙中配置防火墙策略，但这里只能选择低中高等级，并不知道具体控制策略，主要起一个心理作用。</p>
+<p>路由器的配置，在高级设置-防火墙里面可以配置，开启ipv6防火墙后默认拒绝所有传入连接，可指定ip和端口开放，但考虑到主机ip是从光猫动态获取的，可能会变化，所以这里就没有启用。</p>
+<p>终端防火墙的配置，Windows可以直接在高级防火墙设置里添加允许的传入连接，未匹配到允许规则时windows防火墙默认会拒绝连接。</p>
+<h2 id="域名配置"><a class="header-anchor" href="#域名配置"></a>域名配置</h2>
+<p>能通过IP访问后，为了让访问过程更方便，我决定申请个域名，通过域名来访问主机，再通过定时执行检查脚本来实现ddns的功能。</p>
+<p>查了一些资料后，我在<a target="_blank" rel="noopener" href="https://www.namesilo.com/">namesilo</a>花 1.88 美元租了个一年的域名，选他主要是因为便宜、免备案还免费提供whois信息隐藏服务，再把域名解析服务器设置为阿里云，这样管理起来方便一点。</p>
+<p><img src="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301125904797.png" class="lazy" data-srcset="/2023/02/28/%E6%9D%82%E8%AE%B0/%E5%85%AC%E7%BD%91ipv6%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/image-20230301125904797.png" srcset="/images/loadingImage.gif" alt="image-20230301125904797"></p>
+<p>这里配置完后，到阿里云的控制台，找到<a target="_blank" rel="noopener" href="https://dns.console.aliyun.com/">云解析DNS</a>，页面上简单配置即可，这样下来我们就可以愉快地通过域名访问家里的主机了。</p>
+<p>最后是定时检查ip是否改变，这里我参照阿里云的openApi简单写个python脚本，发现ip变化就通过阿里云的Api去修改解析记录，再通过计划任务运行即可。</p>
+<h2 id="注意事项"><a class="header-anchor" href="#注意事项"></a>注意事项</h2>
+<p>尽管我们通过防火墙对传入连接做了限制，但尽量还是只开放一些静态内容，比如个人博客。如果一定要开放一些FTP、SSH之类的服务，记得选择没有公开漏洞的组件版本，并使用强口令认证。</p>
+<h2 id="TODO"><a class="header-anchor" href="#TODO"></a>TODO</h2>
+<ol>
+<li>
+<p>使用虚拟机对外开放服务</p>
+</li>
+<li>
+<p>证书配置</p>
+</li>
+</ol>
+
+    </div>
+     
+    <div class="post-footer__meta"><p>更新于 2024-05-01</p></div> 
+    <div class="post-entry__tags"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="post-tags__link button"># 计算机网络</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/2021/07/26/%E5%A4%87%E5%BF%98/git%E7%AC%94%E8%AE%B0/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            下一篇
+                        </div>
+                        <div class="nav__title">
+                            git笔记
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+    <div class="post__comments post__with-toc content-card" id="comment">
+        
+    <h4>评论</h4>
+    
+    
+    
+    <div id="valine_container" class="valine_thread"></div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    </div>
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="回到顶部" title="回到顶部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+    
+    <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/ChrAlpha/hexo-theme-cards" target="_blank">Cards</a></p>
+</footer>
+
+        </div>
+        
+    <script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.1.0/dist/lazyload.min.js"></script>
+    <script>
+        window.lazyLoadOptions = {
+            elements_selector: ".lazy",
+            threshold: 0
+        };
+    </script>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+
+    
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.4.1/dist/jquery.fancybox.min.css">
+
+    
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.4.1/dist/jquery.fancybox.min.js"></script>
+
+    <script>
+        let lazyloadT = Boolean('true'),
+            auto_fancybox = Boolean('false')
+        if (auto_fancybox) {
+            $(".post__content").find('img').each(function () {
+                var element = document.createElement("a");
+                $(element).attr("data-fancybox", "gallery");
+                $(element).attr("href", $(this).attr("src"));
+                if (lazyloadT) {
+                    $(element).attr("href", $(this).attr("data-srcset"));
+                }
+                $(this).wrap(element);
+            });
+        } else {
+            $(".post__content").find("fancybox").find('img').each(function () {
+                var element = document.createElement("a");
+                $(element).attr("data-fancybox", "gallery");
+                $(element).attr("href", $(this).attr("src"));
+                if (lazyloadT) {
+                    $(element).attr("href", $(this).attr("data-srcset"));
+                }
+                $(this).wrap(element);
+            });
+        }
+    </script>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+    
+
+    
+    
+    
+    <script>
+        function loadComment() {
+            let e;
+            (e = document.createElement("script")).src = 'https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js',
+            document.body.appendChild(e);
+            e.onload = () => {
+                var valineConfig = {"appId":"0M9mhN0LuFsUNco9OEUOxoU4-MdYXbMMI","appKey":"VbrT4qTbC1MsycoKnEt2laeP","placeholder":null,"path":null,"avatar":"wavatar","meta":["nick","mail","link"],"pageSize":null,"lang":null,"visitor":true,"highlight":null,"avatarForce":null,"recordIP":true,"serverURLs":"https://0m9mhn0l.api.lncldglobal.com","enableQQ":null,"requiredFields":["nick","mail"],"emojiCDN":null,"emojiMaps":null};
+                valineConfig.el = '#valine_container';
+                for (var i in valineConfig) {
+                    if (valineConfig[i] === null) delete valineConfig[i];
+                }
+                new Valine(valineConfig);
+            };
+        }
+    
+        var runningOnBrowser = typeof window !== "undefined";
+        var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+        var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+    
+        setTimeout(function () {
+            if (!isBot && supportsIntersectionObserver) {
+                var comment_observer = new IntersectionObserver(function(entries) {
+                    if (entries[0].isIntersecting) {
+                        loadComment();
+                        comment_observer.disconnect();
+                    }
+                }, { threshold: [0] });
+                comment_observer.observe(document.getElementById('comment'));
+            } else {
+                loadComment();
+            }
+        }, 1);
+    </script>
+
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+
+
+    </body>
+</html>

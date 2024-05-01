@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+        <link rel="shortcut icon" href="/images/favicon.ico">
+    
+    
+        <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    
+    
+        <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    
+    
+        <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    
+    
+        <link rel="mask-icon" href="/images/safari-pinned-tab.svg">
+    
+
+
+    <!-- meta -->
+
+
+<title>2020信安国赛WriteUp | Dawnyh&#39;s Blog</title>
+
+
+    <meta name="keywords" content="CTF">
+
+
+
+
+    <!-- OpenGraph -->
+
+
+    
+<link rel="stylesheet" href="/css/style/main.css">
+ 
+
+    
+    
+    
+
+    
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/" class="button">
+            <span class="logo__text">Dawnyh&#39;s Blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/" class="navbar-menu button">首页</a>
+                
+                    <a href="/tags/" class="navbar-menu button">标签</a>
+                
+                    <a href="/archives/" class="navbar-menu button">归档</a>
+                
+                    <a href="/friends/" class="navbar-menu button">友链</a>
+                
+            </div>
+        
+        
+        
+    <a href="/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/" class="dropdown-menu button">首页</a>
+                
+                    <a href="/tags/" class="dropdown-menu button">标签</a>
+                
+                    <a href="/archives/" class="dropdown-menu button">归档</a>
+                
+                    <a href="/friends/" class="dropdown-menu button">友链</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        2020信安国赛WriteUp
+    </h1>
+    <div class="post-title__meta">
+        <a href="/archives/2020/08/" class="post-meta__date button">2020-08-22</a>
+        
+    <span class="separate-dot"></span><a href="/categories/%E6%9D%82%E8%AE%B0/" class="button">杂记</a>
+
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+    <aside class="post-side">
+        <div class="post-side__toc">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-number">1.</span> <span class="toc-text">Misc</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#the-best-ctf-game"><span class="toc-number">1.1.</span> <span class="toc-text">the_best_ctf_game</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%B5%E8%84%91%E8%A2%AB%E9%BB%91"><span class="toc-number">1.2.</span> <span class="toc-text">电脑被黑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Crypto"><span class="toc-number">2.</span> <span class="toc-text">Crypto</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#baby"><span class="toc-number">2.1.</span> <span class="toc-text">baby</span></a></li></ol></li></ol>
+        </div>
+    </aside>
+    <a class="btn-toc button" id="btn-toc" tabindex="0">
+        <svg viewBox="0 0 1024 1024" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M128 256h64V192H128zM320 256h576V192H320zM128 544h64v-64H128zM320 544h576v-64H320zM128 832h64v-64H128zM320 832h576v-64H320z" fill="currentColor"></path>
+        </svg>
+    </a>
+    <div class="toc-menus" id="toc-menus">
+        <div class="toc-title">文章目录</div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-number">1.</span> <span class="toc-text">Misc</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#the-best-ctf-game"><span class="toc-number">1.1.</span> <span class="toc-text">the_best_ctf_game</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%B5%E8%84%91%E8%A2%AB%E9%BB%91"><span class="toc-number">1.2.</span> <span class="toc-text">电脑被黑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Crypto"><span class="toc-number">2.</span> <span class="toc-text">Crypto</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#baby"><span class="toc-number">2.1.</span> <span class="toc-text">baby</span></a></li></ol></li></ol>
+    </div>
+
+
+<article class="post post__with-toc content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <h2 id="Misc"><a class="header-anchor" href="#Misc"></a>Misc</h2>
+<h3 id="the-best-ctf-game"><a class="header-anchor" href="#the-best-ctf-game"></a>the_best_ctf_game</h3>
+<p>解压得到二进制文件:flag</p>
+<p>使用winhex打开</p>
+<p>观察到</p>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820142658465.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820142658465.png" srcset="/images/loadingImage.gif" alt="image-20200820142658465"></p>
+<p>即flag的值</p>
+<h3 id="电脑被黑"><a class="header-anchor" href="#电脑被黑"></a>电脑被黑</h3>
+<p>解压缩包得到disk_dump文件</p>
+<p>使用file 命令查看信息</p>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201008231.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201008231.png" srcset="/images/loadingImage.gif" alt="image-20200820201008231"></p>
+<p>可以看到是ext3的文件系统</p>
+<p>挂载到 test文件夹下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">mount ./disk_dump ./test/<br></code></pre></td></tr></table></figure>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201521587.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201521587.png" srcset="/images/loadingImage.gif" alt="image-20200820201521587"></p>
+<p>查看???.png，提示flag已被删除</p>
+<p>使用extundelete恢复被删除的文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">extundelete ./disk_dump --restore-all<br></code></pre></td></tr></table></figure>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201902816.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820201902816.png" srcset="/images/loadingImage.gif" alt="image-20200820201902816"></p>
+<p>得到flag.txt，但打开后是乱码</p>
+<p>返回test/misc01文件夹下，看到可执行文件demo</p>
+<p>使用strings命令查看</p>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820202222131.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200820202222131.png" srcset="/images/loadingImage.gif" alt="image-20200820202222131"></p>
+<p>猜测demo对flag.txt进行了处理</p>
+<p>使用ida反编译查看其伪源码</p>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/20200820202837.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/20200820202837.png" srcset="/images/loadingImage.gif" alt="image-20200820202837"></p>
+<p>编写代码对flag文件进行解码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>    FILE *fileOld = fopen(<span class="hljs-string">&quot;D:\\flag.txt&quot;</span>,<span class="hljs-string">&quot;rb&quot;</span>);<br>    FILE *fileNew = fopen(<span class="hljs-string">&quot;D:\\flagNew.txt&quot;</span>,<span class="hljs-string">&quot;rb+&quot;</span>);<br>    <span class="hljs-type">char</span> v1,v4,v5;<br>    v4 = <span class="hljs-number">34</span>;<br>    v5 = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">while</span>(<span class="hljs-number">1</span>)<br>    &#123;<br>        v1 = fgetc(fileOld);<br>        <span class="hljs-keyword">if</span>( v1 == <span class="hljs-number">-1</span> )<br>            <span class="hljs-keyword">break</span>;<br>        fputc(((v1^v4)-v5),fileNew);<br>        v4 += <span class="hljs-number">34</span>;<br>        v5 = (v5 + <span class="hljs-number">2</span>) &amp; <span class="hljs-number">0xF</span>;<br>    &#125;<br>    fclose(fileNew);<br>    fclose(fileOld);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>解码后得到flag</p>
+<h2 id="Crypto"><a class="header-anchor" href="#Crypto"></a>Crypto</h2>
+<p>只做出来一道题</p>
+<h3 id="baby"><a class="header-anchor" href="#baby"></a>baby</h3>
+<p>一道RSA的密码学题目</p>
+<p>给了我们密文c和因数n，e很小。所以可以通过爆破的方式跑出明文</p>
+<p>解密脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">import gmpy<br>n = 691316677109436623113422493782665795857921917893759942123087462879884062720557906429183155859597756890896192044003240821906332575292476160072039505771794531255542244123516929671277306361467074545720823735806308003091983427678300287709469582282466572230066580195227278214776280213722215953097747453437289734469454712426107967188109548966907237877840316009828476200388327329144783877033491238709954473809991152727333616022406517443130542713167206421787038596312975153165848625721911080561242646092299016802662913017071685740548699163836007474224715426587609549372289181977830092677128368806113131459831182390520942892670696447128631485606579943885812260640805756035377584155135770155915782120025116486061540105139339655722904721294629149025033066823599823964444620779259106176913478839370100891213072100063101232635183636552360952762838656307300621195248059253614745118852163569388418086291748805100175008658387803878200034840215506516715640621165661642177371863874586069524022258642915100615596032443145034847031564356671559179212705466145609698475546210994748949121359853094247990533075004393534565421776468785821261291309463205314057882016266066365636018084499158806717036972590848458891019171583268920180691221168453612029698510271<br>c = 3442467842482561323703237574537907554035337622762971103210557480050349359873041624336261782731509068910003360547049942482415036862904844600484976674423604861710166033558576921438068555951948966099658902606725292551952345193132973996288566246138708754810511646811362017769063041425115712305629748341207792305694590742066971202523405301561233341991037374101265623265332070787449332991792097090044761973705909217137119649091313457206589803479797894924402017273543719924849592070328396276760381501612934039653<br>i = 0<br>while 1:<br>    if(gmpy.root(c+i*n, 3)[1]==1):<br>        print gmpy.root(c+i*n, 3)<br>        break<br>    i = i+1<br></code></pre></td></tr></table></figure>
+<p>结果是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">m=1509929362729692740720713536968392715648402189242304424408501797538190273763219595501810359943405524344790331677540693316488309231687357778980543085568230705511696327037<br></code></pre></td></tr></table></figure>
+<p>再解码得到flag</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs plaintext">import libnum<br>n=1509929362729692740720713536968392715648402189242304424408501797538190273763219595501810359943405524344790331677540693316488309231687357778980543085568230705511696327037<br>print(libnum.n2s(n))<br></code></pre></td></tr></table></figure>
+<p><img src="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200920135022901.png" class="lazy" data-srcset="/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/image-20200920135022901.png" srcset="/images/loadingImage.gif" alt="image-20200920135022901"></p>
+
+    </div>
+     
+    <div class="post-footer__meta"><p>更新于 2024-05-01</p></div> 
+    <div class="post-entry__tags"><a href="/tags/CTF/" class="post-tags__link button"># CTF</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+                <a href="/2021/03/07/%E6%94%BB%E9%98%B2/Linux%E7%B3%BB%E7%BB%9F%E5%8A%A0%E5%9B%BA/" class="nav__link">
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M589.088 790.624L310.464 512l278.624-278.624 45.248 45.248L400.96 512l233.376 233.376z" fill="#808080"></path></svg>
+                    </div>
+                    <div>
+                        <div class="nav__label">
+                            上一篇
+                        </div>
+                        <div class="nav__title">
+                            Linux系统加固
+                        </div>
+                    </div>
+                </a>
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            下一篇
+                        </div>
+                        <div class="nav__title">
+                            MySQL的自动类型转换
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+    <div class="post__comments post__with-toc content-card" id="comment">
+        
+    <h4>评论</h4>
+    
+    
+    
+    <div id="valine_container" class="valine_thread"></div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    </div>
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="回到顶部" title="回到顶部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+    
+    <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/ChrAlpha/hexo-theme-cards" target="_blank">Cards</a></p>
+</footer>
+
+        </div>
+        
+    <script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.1.0/dist/lazyload.min.js"></script>
+    <script>
+        window.lazyLoadOptions = {
+            elements_selector: ".lazy",
+            threshold: 0
+        };
+    </script>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+
+    
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.4.1/dist/jquery.fancybox.min.css">
+
+    
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.4.1/dist/jquery.fancybox.min.js"></script>
+
+    <script>
+        let lazyloadT = Boolean('true'),
+            auto_fancybox = Boolean('false')
+        if (auto_fancybox) {
+            $(".post__content").find('img').each(function () {
+                var element = document.createElement("a");
+                $(element).attr("data-fancybox", "gallery");
+                $(element).attr("href", $(this).attr("src"));
+                if (lazyloadT) {
+                    $(element).attr("href", $(this).attr("data-srcset"));
+                }
+                $(this).wrap(element);
+            });
+        } else {
+            $(".post__content").find("fancybox").find('img').each(function () {
+                var element = document.createElement("a");
+                $(element).attr("data-fancybox", "gallery");
+                $(element).attr("href", $(this).attr("src"));
+                if (lazyloadT) {
+                    $(element).attr("href", $(this).attr("data-srcset"));
+                }
+                $(this).wrap(element);
+            });
+        }
+    </script>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+    
+
+    
+    
+    
+    <script>
+        function loadComment() {
+            let e;
+            (e = document.createElement("script")).src = 'https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js',
+            document.body.appendChild(e);
+            e.onload = () => {
+                var valineConfig = {"appId":"0M9mhN0LuFsUNco9OEUOxoU4-MdYXbMMI","appKey":"VbrT4qTbC1MsycoKnEt2laeP","placeholder":null,"path":null,"avatar":"wavatar","meta":["nick","mail","link"],"pageSize":null,"lang":null,"visitor":true,"highlight":null,"avatarForce":null,"recordIP":true,"serverURLs":"https://0m9mhn0l.api.lncldglobal.com","enableQQ":null,"requiredFields":["nick","mail"],"emojiCDN":null,"emojiMaps":null};
+                valineConfig.el = '#valine_container';
+                for (var i in valineConfig) {
+                    if (valineConfig[i] === null) delete valineConfig[i];
+                }
+                new Valine(valineConfig);
+            };
+        }
+    
+        var runningOnBrowser = typeof window !== "undefined";
+        var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+        var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+    
+        setTimeout(function () {
+            if (!isBot && supportsIntersectionObserver) {
+                var comment_observer = new IntersectionObserver(function(entries) {
+                    if (entries[0].isIntersecting) {
+                        loadComment();
+                        comment_observer.disconnect();
+                    }
+                }, { threshold: [0] });
+                comment_observer.observe(document.getElementById('comment'));
+            } else {
+                loadComment();
+            }
+        }, 1);
+    </script>
+
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+
+
+    </body>
+</html>
