@@ -1,66 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>TCP&amp;IP</title>
-    <url>/2021/03/14/%E5%A4%87%E5%BF%98/TCP&amp;IP/</url>
-    <content><![CDATA[<h2 id="TCP"><a class="header-anchor" href="#TCP"></a>TCP</h2>
-<h3 id="三次握手和四次挥手"><a class="header-anchor" href="#三次握手和四次挥手"></a>三次握手和四次挥手</h3>
-<p>TCP是可靠的，面向连接的传输层协议，端到端之间要进行TCP通信首先就要建立起TCP连接，当通信结束时断开TCP连接。这里TCP连接的建立与断开过程就分别由<code>三次握手</code>和<code>四次挥手</code>来完成。</p>
-<ul>
-<li>
-<p>三次握手</p>
-<p>TCP连接是通过三次握手进行初始化的。三次握手的目的是同步连接双方的序列号和确认号并交换 TCP窗口大小信息。具体过程如下图所示。</p>
-<p><img src="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316191610581.png" class="lazy" data-srcset="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316191610581.png" srcset="/images/loadingImage.gif" alt="image-20210316191610581"></p>
-<p><strong>第一次握手：</strong> 建立连接。客户端发送连接请求报文段，SYN位置为1，Sequence Number为随机数<code>i</code>；然后，客户端进入SYN_SENT状态，等待服务器的确认；</p>
-<p><strong>第二次握手：</strong> 服务器收到SYN报文段。服务器收到客户端的SYN报文段，需要对这个SYN报文段进行确认，设置Acknowledgment Number为<code>i+1</code> ( Sequence Number+1 )；同时，自己自己还要发送SYN请求信息，SYN设置为1，Sequence Number为<code>j</code>；服务器端将上述所有信息放到一个报文段（即SYN+ACK报文段）中，一并发送给客户端，此时服务器进入SYN_RCVD状态；</p>
-<p><strong>第三次握手：</strong> 客户端收到服务器的SYN+ACK报文段。然后将Acknowledgment Number设置为<code>j+1</code>，向服务器发送ACK报文段，这个报文段发送完毕以后，客户端和服务器端都进入ESTABLISHED状态，完成TCP三次握手。</p>
-<p>在wireshark中可以分别查看<code>ACK</code>和<code>Seq</code>的实际值和相对值，第一个包的Seq相对值为0。</p>
-<p><strong><code>Seq</code>的相对值为当前端已发送的TCP总段长，<code>ACK</code>的相对值为当前端已接收的TCP总段长（单位：字节），</strong><code>SYN</code>标志位和<code>FIN</code>标志位也要占1字节（其他标志位如ACK不占）。</p>
-</li>
-<li>
-<p>四次挥手</p>
-<img src="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316213743223.png" class="lazy" data-srcset="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316213743223.png" srcset="/images/loadingImage.gif" style="zoom:50%;">
-<p><strong>中断连接端可以是Client端，也可以是Server端。</strong></p>
-<p>假设Client端发起中断连接请求，也就是发送FIN报文。Server端接到FIN报文后，意思是说&quot;我Client端没有数据要发给你了&quot;，但是如果你还有数据没有发送完成，则不必急着关闭Socket，可以继续发送数据。所以你先发送ACK，“告诉Client端，你的请求我收到了，但是我还没准备好，请继续你等我的消息”。这个时候Client端就进入FIN_WAIT状态，继续等待Server端的FIN报文。当Server端确定数据已发送完成，则向Client端发送FIN报文，“告诉Client端，好了，我这边数据发完了，准备好关闭连接了”。Client端收到FIN报文后，&quot;就知道可以关闭连接了，但是他还是不相信网络，怕Server端不知道要关闭，所以发送ACK后进入TIME_WAIT状态，如果Server端没有收到ACK则可以重传。“，Server端收到ACK后，“就知道可以断开连接了”。Client端等待了2MSL后依然没有收到回复，则证明Server端已正常关闭，那好，我Client端也可以关闭连接了。Ok，TCP连接就这样关闭了！</p>
-</li>
-</ul>
-<h3 id="TCP和UDP的对比"><a class="header-anchor" href="#TCP和UDP的对比"></a>TCP和UDP的对比</h3>
-<p>有连接/无连接（可靠/不可靠）</p>
-<p>有拆分合并/无拆分合并</p>
-<p>有拥塞控制/无拥塞控制（发送速率的调整）</p>
-<p>单播/多播</p>
-<h3 id="滑动窗口和流量控制"><a class="header-anchor" href="#滑动窗口和流量控制"></a>滑动窗口和流量控制</h3>
-<h3 id="拥塞控制"><a class="header-anchor" href="#拥塞控制"></a>拥塞控制</h3>
-<h2 id="http-https"><a class="header-anchor" href="#http-https"></a>http/https</h2>
-<h3 id="http各版本区别"><a class="header-anchor" href="#http各版本区别"></a>http各版本区别</h3>
-<p>http1.0 vs http1.1</p>
-<p>http1.1开始，默认使用长连接（HTTP协议的长连接和短连接，实质上是TCP协议的长连接和短连接。）</p>
-<p>http1.1增加了一些错误状态码，如409（Conflict）表示请求的资源与资源的当前状态发生冲突；410（Gone）表示服务器上的某个资源被永久性的删除。</p>
-<h3 id="SSL-TLS"><a class="header-anchor" href="#SSL-TLS"></a>SSL/TLS</h3>
-<ul>
-<li>首先由客户端发送Client Hello 消息到服务器，消息中主要包含了客户端支持的<code>ciphersuites</code>， TLS 版本信息和客户端随机数。<strong>注意此时是明文传输</strong></li>
-<li>服务器接收到消息后，返回自己支持的<code>ciphersuites</code>， TLS 版本，<strong>自己的数字证书</strong>和服务器端生成的随机数。<strong>注意此时是明文传输</strong></li>
-<li>客户端开始验证数字证书，可能会不断往上追溯 CA、CA 的 CA、CA 的 CA 的 CA，直到一个受信的 CA。验证完证书之后生成一个新的<code>pre-master key</code>，再使用证书中的公钥来对<code>pre-master key</code>进行加密，然后发送给服务器。<strong>注意此时是非对称加密传输</strong></li>
-<li>服务器接收到客户端发送过来的非对称加密的密文，使用自己的私钥进行解密，获得了<code>pre-master key</code>。<strong>注意此时是非对称加密传输</strong></li>
-<li>到这里为止，服务器和客户端都有三组数字，**分别是客户端的随机数、服务器的随机数和pre-master key。**其中由于客户端的随机数和服务器的随机数都是使用明文传输，所以这两个数字是有被暴露的风险的，但是由于<code>pre-master key</code>是使用非对称加密传输，十分安全，所以将这三者结合，使用之前协商好的特定的算法就可以生成一个密钥，这个密钥称为<code>shared secert</code>。也就是之后用来对称加密的密钥。</li>
-<li>客户端在计算出对称加密的密钥之后，使用该密钥进行对称加密通信，告知服务器之后都使用该密钥进行对称加密。<strong>注意此时是对称加密传输</strong></li>
-<li>服务器接收到密文后，使用之前计算出的密钥来进行对称解密，解密成功之后，再使用该密钥进行对称加密通信。告知客户端密钥确认无误，可以使用该密钥进行通信。<strong>注意此时是对称加密传输</strong></li>
-<li>至此，整个TLS的握手过程完整，之后就可以开始对称加密的通信了。</li>
-</ul>
-<h2 id="参考文章"><a class="header-anchor" href="#参考文章"></a>参考文章</h2>
-<ul>
-<li><a href="https://blog.csdn.net/whuslei/article/details/6667471">TCP协议中的三次握手和四次挥手(图解)</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/72587882">关于 TCP/IP，必知必会的10个问题</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>备忘</category>
-      </categories>
-      <tags>
-        <tag>计算机网络</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>docker常用命令</title>
     <url>/2020/07/20/%E5%A4%87%E5%BF%98/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<h2 id="镜像管理"><a class="header-anchor" href="#镜像管理"></a>镜像管理</h2>
@@ -218,28 +158,6 @@
       </categories>
       <tags>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>网络代理设置</title>
-    <url>/2021/07/08/%E5%A4%87%E5%BF%98/%E7%BD%91%E7%BB%9C%E4%BB%A3%E7%90%86%E8%AE%BE%E7%BD%AE/</url>
-    <content><![CDATA[<h2 id="命令行代理设置"><a class="header-anchor" href="#命令行代理设置"></a>命令行代理设置</h2>
-<p>设置命令行代理（设置环境变量,命令行关闭后则失效）</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment"># cmd</span></span></span><br><span class="line">set HTTP_PROXY=http://127.0.0.1:10809</span><br><span class="line">set HTTPS_PROXY=http://127.0.0.1:10809</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment"># powershell 默认使用系统代理，无需手动配置</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment"># bash</span></span></span><br><span class="line">export http_proxy=&quot;http://127.0.0.1:10809&quot;</span><br><span class="line">export https_proxy=&quot;http://127.0.0.1:10809&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment"># 测试是否设置成功不要ping google，因为ping命令用的是ICMP协议。正确做法是</span></span></span><br><span class="line">curl www.google.com</span><br></pre></td></tr></table></figure>
-<h2 id="git代理设置"><a class="header-anchor" href="#git代理设置"></a>git代理设置</h2>
-<p>设置永久有效</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git config --global http.proxy http://127.0.0.1:10809	</span><br><span class="line">git config --global https.proxy https://127.0.0.1:10809</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment"># 若为socks代理，则为：</span></span></span><br><span class="line">git config --global http.proxy &#x27;socks5://127.0.0.1:10808&#x27;</span><br><span class="line">git config --global https.proxy &#x27;socks5://127.0.0.1:10808&#x27;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">查看代理是否设置成功</span></span><br><span class="line">git config --global --list</span><br></pre></td></tr></table></figure>
-<h2 id="go代理设置"><a class="header-anchor" href="#go代理设置"></a>go代理设置</h2>
-<p>Bash (Linux / macOS)</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">export GOPROXY=https://goproxy.io,direct</span><br></pre></td></tr></table></figure>
-<p>PowerShell (Windows)</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash"><span class="built_in">env</span>:GOPROXY = <span class="string">&quot;https://goproxy.io,direct&quot;</span></span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>备忘</category>
-      </categories>
-      <tags>
-        <tag>计算机网络</tag>
       </tags>
   </entry>
   <entry>
@@ -549,37 +467,6 @@
       </tags>
   </entry>
   <entry>
-    <title>MySQL的自动类型转换</title>
-    <url>/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</url>
-    <content><![CDATA[<p>在查询语句的条件判断子句中，如果等号左右两边的类型不同，则会自动进行类型转换。以如下数据表为例</p>
-<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722084058433.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722084058433.png" srcset="/images/loadingImage.gif" alt="image-20200722084058433"></p>
-<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722082629984.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722082629984.png" srcset="/images/loadingImage.gif" alt="image-20200722082629984"></p>
-<p><code>DVWA</code>的<code>user</code>表👆</p>
-<p>在进行以下查询时结果如图：</p>
-<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722082807883.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722082807883.png" srcset="/images/loadingImage.gif" alt="image-20200722082807883"></p>
-<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722082829117.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722082829117.png" srcset="/images/loadingImage.gif" alt="image-20200722082829117"></p>
-<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722084904218.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722084904218.png" srcset="/images/loadingImage.gif" alt="image-20200722084904218"></p>
-<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722084727031.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722084727031.png" srcset="/images/loadingImage.gif" alt="image-20200722084727031"></p>
-<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722083932481.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722083932481.png" srcset="/images/loadingImage.gif" alt="image-20200722083932481"></p>
-<p>通过上面几个查询的例子可以看到，mysql查询语句的条件判断中，像user_id = ‘xxx’ 这种条件，user_id 是整型，而 ‘xxx’ 是字符串型，在判断时，'xxx’会被当作一个整型与 user_id进行比较。</p>
-<p>而转换的规则也很有意思。</p>
-<p>‘1 and 1=1’ 被当作 1</p>
-<p>‘1 and 1=2’ 也被当作1</p>
-<p>‘2 and 1=1’ 被当作2</p>
-<p>经过更多的测试可以发现</p>
-<p>这个字符串（不论是单引号或者是双引号）在被当作整型数进行处理的时候</p>
-<p>如果第一个字符不是数字，那么该字符串被当成<code>0</code>来处理；</p>
-<p>如果第一个字符是数字，那么这个字符串就等于从第一个字符开始的数字串</p>
-<p>比如：‘4gsb’ = 4；‘108hh’ = 108</p>
-]]></content>
-      <categories>
-        <category>杂记</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2020信安国赛WriteUp</title>
     <url>/2020/08/22/%E6%9D%82%E8%AE%B0/2020%E4%BF%A1%E5%AE%89%E5%9B%BD%E8%B5%9BWriteUp/</url>
     <content><![CDATA[<h2 id="Misc"><a class="header-anchor" href="#Misc"></a>Misc</h2>
@@ -629,19 +516,6 @@
       </categories>
       <tags>
         <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>关于我</title>
-    <url>/2020/04/06/%E6%9D%82%E8%AE%B0/%E5%85%B3%E4%BA%8E%E6%88%91/</url>
-    <content><![CDATA[<p>一个对网络安全初窥门径的人，偶尔会心血来潮想要写写代码。</p>
-<p>邮箱：dawnyh@qq.com，欢迎交流 ~</p>
-]]></content>
-      <categories>
-        <category>杂记</category>
-      </categories>
-      <tags>
-        <tag>关于我</tag>
       </tags>
   </entry>
   <entry>
@@ -717,6 +591,79 @@
       </tags>
   </entry>
   <entry>
+    <title>TCP&amp;IP</title>
+    <url>/2021/03/14/%E5%A4%87%E5%BF%98/TCP&amp;IP/</url>
+    <content><![CDATA[<h2 id="TCP"><a class="header-anchor" href="#TCP"></a>TCP</h2>
+<h3 id="三次握手和四次挥手"><a class="header-anchor" href="#三次握手和四次挥手"></a>三次握手和四次挥手</h3>
+<p>TCP是可靠的，面向连接的传输层协议，端到端之间要进行TCP通信首先就要建立起TCP连接，当通信结束时断开TCP连接。这里TCP连接的建立与断开过程就分别由<code>三次握手</code>和<code>四次挥手</code>来完成。</p>
+<ul>
+<li>
+<p>三次握手</p>
+<p>TCP连接是通过三次握手进行初始化的。三次握手的目的是同步连接双方的序列号和确认号并交换 TCP窗口大小信息。具体过程如下图所示。</p>
+<p><img src="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316191610581.png" class="lazy" data-srcset="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316191610581.png" srcset="/images/loadingImage.gif" alt="image-20210316191610581"></p>
+<p><strong>第一次握手：</strong> 建立连接。客户端发送连接请求报文段，SYN位置为1，Sequence Number为随机数<code>i</code>；然后，客户端进入SYN_SENT状态，等待服务器的确认；</p>
+<p><strong>第二次握手：</strong> 服务器收到SYN报文段。服务器收到客户端的SYN报文段，需要对这个SYN报文段进行确认，设置Acknowledgment Number为<code>i+1</code> ( Sequence Number+1 )；同时，自己自己还要发送SYN请求信息，SYN设置为1，Sequence Number为<code>j</code>；服务器端将上述所有信息放到一个报文段（即SYN+ACK报文段）中，一并发送给客户端，此时服务器进入SYN_RCVD状态；</p>
+<p><strong>第三次握手：</strong> 客户端收到服务器的SYN+ACK报文段。然后将Acknowledgment Number设置为<code>j+1</code>，向服务器发送ACK报文段，这个报文段发送完毕以后，客户端和服务器端都进入ESTABLISHED状态，完成TCP三次握手。</p>
+<p>在wireshark中可以分别查看<code>ACK</code>和<code>Seq</code>的实际值和相对值，第一个包的Seq相对值为0。</p>
+<p><strong><code>Seq</code>的相对值为当前端已发送的TCP总段长，<code>ACK</code>的相对值为当前端已接收的TCP总段长（单位：字节），</strong><code>SYN</code>标志位和<code>FIN</code>标志位也要占1字节（其他标志位如ACK不占）。</p>
+</li>
+<li>
+<p>四次挥手</p>
+<img src="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316213743223.png" class="lazy" data-srcset="/2021/03/14/%E5%A4%87%E5%BF%98/TCP&IP/image-20210316213743223.png" srcset="/images/loadingImage.gif" style="zoom:50%;">
+<p><strong>中断连接端可以是Client端，也可以是Server端。</strong></p>
+<p>假设Client端发起中断连接请求，也就是发送FIN报文。Server端接到FIN报文后，意思是说&quot;我Client端没有数据要发给你了&quot;，但是如果你还有数据没有发送完成，则不必急着关闭Socket，可以继续发送数据。所以你先发送ACK，“告诉Client端，你的请求我收到了，但是我还没准备好，请继续你等我的消息”。这个时候Client端就进入FIN_WAIT状态，继续等待Server端的FIN报文。当Server端确定数据已发送完成，则向Client端发送FIN报文，“告诉Client端，好了，我这边数据发完了，准备好关闭连接了”。Client端收到FIN报文后，&quot;就知道可以关闭连接了，但是他还是不相信网络，怕Server端不知道要关闭，所以发送ACK后进入TIME_WAIT状态，如果Server端没有收到ACK则可以重传。“，Server端收到ACK后，“就知道可以断开连接了”。Client端等待了2MSL后依然没有收到回复，则证明Server端已正常关闭，那好，我Client端也可以关闭连接了。Ok，TCP连接就这样关闭了！</p>
+</li>
+</ul>
+<h3 id="TCP和UDP的对比"><a class="header-anchor" href="#TCP和UDP的对比"></a>TCP和UDP的对比</h3>
+<p>有连接/无连接（可靠/不可靠）</p>
+<p>有拆分合并/无拆分合并</p>
+<p>有拥塞控制/无拥塞控制（发送速率的调整）</p>
+<p>单播/多播</p>
+<h3 id="滑动窗口和流量控制"><a class="header-anchor" href="#滑动窗口和流量控制"></a>滑动窗口和流量控制</h3>
+<h3 id="拥塞控制"><a class="header-anchor" href="#拥塞控制"></a>拥塞控制</h3>
+<h2 id="http-https"><a class="header-anchor" href="#http-https"></a>http/https</h2>
+<h3 id="http各版本区别"><a class="header-anchor" href="#http各版本区别"></a>http各版本区别</h3>
+<p>http1.0 vs http1.1</p>
+<p>http1.1开始，默认使用长连接（HTTP协议的长连接和短连接，实质上是TCP协议的长连接和短连接。）</p>
+<p>http1.1增加了一些错误状态码，如409（Conflict）表示请求的资源与资源的当前状态发生冲突；410（Gone）表示服务器上的某个资源被永久性的删除。</p>
+<h3 id="SSL-TLS"><a class="header-anchor" href="#SSL-TLS"></a>SSL/TLS</h3>
+<ul>
+<li>首先由客户端发送Client Hello 消息到服务器，消息中主要包含了客户端支持的<code>ciphersuites</code>， TLS 版本信息和客户端随机数。<strong>注意此时是明文传输</strong></li>
+<li>服务器接收到消息后，返回自己支持的<code>ciphersuites</code>， TLS 版本，<strong>自己的数字证书</strong>和服务器端生成的随机数。<strong>注意此时是明文传输</strong></li>
+<li>客户端开始验证数字证书，可能会不断往上追溯 CA、CA 的 CA、CA 的 CA 的 CA，直到一个受信的 CA。验证完证书之后生成一个新的<code>pre-master key</code>，再使用证书中的公钥来对<code>pre-master key</code>进行加密，然后发送给服务器。<strong>注意此时是非对称加密传输</strong></li>
+<li>服务器接收到客户端发送过来的非对称加密的密文，使用自己的私钥进行解密，获得了<code>pre-master key</code>。<strong>注意此时是非对称加密传输</strong></li>
+<li>到这里为止，服务器和客户端都有三组数字，**分别是客户端的随机数、服务器的随机数和pre-master key。**其中由于客户端的随机数和服务器的随机数都是使用明文传输，所以这两个数字是有被暴露的风险的，但是由于<code>pre-master key</code>是使用非对称加密传输，十分安全，所以将这三者结合，使用之前协商好的特定的算法就可以生成一个密钥，这个密钥称为<code>shared secert</code>。也就是之后用来对称加密的密钥。</li>
+<li>客户端在计算出对称加密的密钥之后，使用该密钥进行对称加密通信，告知服务器之后都使用该密钥进行对称加密。<strong>注意此时是对称加密传输</strong></li>
+<li>服务器接收到密文后，使用之前计算出的密钥来进行对称解密，解密成功之后，再使用该密钥进行对称加密通信。告知客户端密钥确认无误，可以使用该密钥进行通信。<strong>注意此时是对称加密传输</strong></li>
+<li>至此，整个TLS的握手过程完整，之后就可以开始对称加密的通信了。</li>
+</ul>
+<h2 id="参考文章"><a class="header-anchor" href="#参考文章"></a>参考文章</h2>
+<ul>
+<li><a href="https://blog.csdn.net/whuslei/article/details/6667471">TCP协议中的三次握手和四次挥手(图解)</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/72587882">关于 TCP/IP，必知必会的10个问题</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>备忘</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>关于我</title>
+    <url>/2020/04/06/%E6%9D%82%E8%AE%B0/%E5%85%B3%E4%BA%8E%E6%88%91/</url>
+    <content><![CDATA[<p>一个对网络安全初窥门径的人，偶尔会心血来潮想要写写代码。</p>
+<p>邮箱：dawnyh@qq.com，欢迎交流 ~</p>
+]]></content>
+      <categories>
+        <category>杂记</category>
+      </categories>
+      <tags>
+        <tag>关于我</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>在Markdown中使用emoji表情</title>
     <url>/2020/04/07/%E6%9D%82%E8%AE%B0/%E5%9C%A8Markdown%E4%B8%AD%E4%BD%BF%E7%94%A8emoji%E8%A1%A8%E6%83%85/</url>
     <content><![CDATA[<h2 id="常用emoji"><a class="header-anchor" href="#常用emoji"></a>常用emoji</h2>
@@ -743,6 +690,59 @@
       </categories>
       <tags>
         <tag>Markdown</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>网络代理设置</title>
+    <url>/2021/07/08/%E5%A4%87%E5%BF%98/%E7%BD%91%E7%BB%9C%E4%BB%A3%E7%90%86%E8%AE%BE%E7%BD%AE/</url>
+    <content><![CDATA[<h2 id="命令行代理设置"><a class="header-anchor" href="#命令行代理设置"></a>命令行代理设置</h2>
+<p>设置命令行代理（设置环境变量,命令行关闭后则失效）</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment"># cmd</span></span></span><br><span class="line">set HTTP_PROXY=http://127.0.0.1:10809</span><br><span class="line">set HTTPS_PROXY=http://127.0.0.1:10809</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment"># powershell 默认使用系统代理，无需手动配置</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment"># bash</span></span></span><br><span class="line">export http_proxy=&quot;http://127.0.0.1:10809&quot;</span><br><span class="line">export https_proxy=&quot;http://127.0.0.1:10809&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment"># 测试是否设置成功不要ping google，因为ping命令用的是ICMP协议。正确做法是</span></span></span><br><span class="line">curl www.google.com</span><br></pre></td></tr></table></figure>
+<h2 id="git代理设置"><a class="header-anchor" href="#git代理设置"></a>git代理设置</h2>
+<p>设置永久有效</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git config --global http.proxy http://127.0.0.1:10809	</span><br><span class="line">git config --global https.proxy https://127.0.0.1:10809</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment"># 若为socks代理，则为：</span></span></span><br><span class="line">git config --global http.proxy &#x27;socks5://127.0.0.1:10808&#x27;</span><br><span class="line">git config --global https.proxy &#x27;socks5://127.0.0.1:10808&#x27;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">查看代理是否设置成功</span></span><br><span class="line">git config --global --list</span><br></pre></td></tr></table></figure>
+<h2 id="go代理设置"><a class="header-anchor" href="#go代理设置"></a>go代理设置</h2>
+<p>Bash (Linux / macOS)</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">export GOPROXY=https://goproxy.io,direct</span><br></pre></td></tr></table></figure>
+<p>PowerShell (Windows)</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash"><span class="built_in">env</span>:GOPROXY = <span class="string">&quot;https://goproxy.io,direct&quot;</span></span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>备忘</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL的自动类型转换</title>
+    <url>/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</url>
+    <content><![CDATA[<p>在查询语句的条件判断子句中，如果等号左右两边的类型不同，则会自动进行类型转换。以如下数据表为例</p>
+<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722084058433.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722084058433.png" srcset="/images/loadingImage.gif" alt="image-20200722084058433"></p>
+<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722082629984.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722082629984.png" srcset="/images/loadingImage.gif" alt="image-20200722082629984"></p>
+<p><code>DVWA</code>的<code>user</code>表👆</p>
+<p>在进行以下查询时结果如图：</p>
+<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722082807883.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722082807883.png" srcset="/images/loadingImage.gif" alt="image-20200722082807883"></p>
+<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722082829117.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722082829117.png" srcset="/images/loadingImage.gif" alt="image-20200722082829117"></p>
+<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722084904218.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722084904218.png" srcset="/images/loadingImage.gif" alt="image-20200722084904218"></p>
+<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722084727031.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722084727031.png" srcset="/images/loadingImage.gif" alt="image-20200722084727031"></p>
+<p><img src="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722083932481.png" class="lazy" data-srcset="/2020/07/22/%E6%9D%82%E8%AE%B0/mysql%E7%9A%84%E8%87%AA%E5%8A%A8%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/image-20200722083932481.png" srcset="/images/loadingImage.gif" alt="image-20200722083932481"></p>
+<p>通过上面几个查询的例子可以看到，mysql查询语句的条件判断中，像user_id = ‘xxx’ 这种条件，user_id 是整型，而 ‘xxx’ 是字符串型，在判断时，'xxx’会被当作一个整型与 user_id进行比较。</p>
+<p>而转换的规则也很有意思。</p>
+<p>‘1 and 1=1’ 被当作 1</p>
+<p>‘1 and 1=2’ 也被当作1</p>
+<p>‘2 and 1=1’ 被当作2</p>
+<p>经过更多的测试可以发现</p>
+<p>这个字符串（不论是单引号或者是双引号）在被当作整型数进行处理的时候</p>
+<p>如果第一个字符不是数字，那么该字符串被当成<code>0</code>来处理；</p>
+<p>如果第一个字符是数字，那么这个字符串就等于从第一个字符开始的数字串</p>
+<p>比如：‘4gsb’ = 4；‘108hh’ = 108</p>
+]]></content>
+      <categories>
+        <category>杂记</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
       </tags>
   </entry>
 </search>
